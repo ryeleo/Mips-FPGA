@@ -1,4 +1,4 @@
 // 2016 Ryan Leonard
 // RegisterFile (RF) Module Testbench
 
-module registerFile_test
+module rf_32_test
