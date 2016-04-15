@@ -1,8 +1,11 @@
 // 2016 Ryan Leonard
 // ALU Module Testbench
+
 `timescale 1ns / 1ns
 module test_alu_32;
+
 // The reg/nets we will maniupulate/monitor for testing
+reg         clock;    //clock
 reg [31:0]	a;        //input
 reg [31:0]	b;        //input
 reg [3:0]	  control;  //input
@@ -10,7 +13,7 @@ wire	      cout;     //out
 wire	      zero;     //out
 wire	      overflow; //out
 wire [31:0]	result;   //out
-reg  [8*3:0] str_control; // HELPER
+
 // build a version of the Design Under Test (dut)
 alu_32 dut(
   .s	      (a),
@@ -86,6 +89,7 @@ initial
   end
 
 // Little helper that makes our string output prettier
+reg  [8*3:0] str_control;
 always @ (a or b)
   case(control)
     'h0 : str_control = "and";

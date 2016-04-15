@@ -7,9 +7,10 @@
 //    http://www.verilogtutorial.info/chapter_3.htm
 
 module rf_32(
+  input         clk,
   input [4:0]   rs, rt, rd,
-  input [31:0]  write_data,
   input         write_enabled,
+  input [31:0]  write_data,
   output [31:0] outA, outB
 );
 
@@ -21,11 +22,27 @@ reg [31:0] register_file[31:0];
 //  reg_SIZE-1        reg_COUNT-1
 //  (register size)   (register file size)
 
-// Using continuous assignment
+
+//Initialize all registers to zero?
+/* 
+integer i;
+initial 
+  for (i=0; i<=31; i=i+1) begin
+    register_file[i] = 32'b0;
+  end
+*/
+
+//Initialize zero register to zero?
+initial
+  register_file[0] = 32'b0;
+
+// Using continuous assignment for our outputing
 assign outA = register_file[rs];
 assign outB = register_file[rt];
 
-always @ (posedge write_endabled)
-  register_file[rd] = write_data;
+// Using an always block for inputs into our memory array
+always @ (posedge clk)
+  if (write_enabled && rd != 5'd0)
+    register_file[rd] <= write_data;
 
 endmodule
