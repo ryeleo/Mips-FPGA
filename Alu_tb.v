@@ -5,7 +5,6 @@
 module test_alu_32;
 
 // The reg/nets we will maniupulate/monitor for testing
-reg         clock;    //clock
 reg [31:0]	a;        //input
 reg [31:0]	b;        //input
 reg [3:0]	  control;  //input

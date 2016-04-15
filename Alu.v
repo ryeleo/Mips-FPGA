@@ -18,9 +18,9 @@
   
 
 module alu_32(
+  input         clk,
   input [31:0]	s, t,
   input [3:0]	  control,
-  //input         clock,
   output	      cout, zero, overflow,
   output [31:0]	result
 );
