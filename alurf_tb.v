@@ -26,30 +26,31 @@ wire [31:0]	result_to_rd; // It is a register for laziness
 
 // Connect our ALU to our Register File (rf)
 alu_32 alu(
+  .clk      (clock),
   .s	      (rs_to_a),      // interconnect
   .t	      (rt_to_b),      // interconnect
   .result   (result_to_rd), // interconnect
-  .control  (control), 
-  .cout     (cout),
-  .zero     (zero),
-  .overflow (overflow)
+  .control  (control),      // knob
+  .cout     (cout),         // monitor
+  .zero     (zero),         // monitor
+  .overflow (overflow)      // monitor
 );
 
 rf_32 rf(
+  .clk            (clock),      
   .write_data     (result_to_rd), // interconnect
   .outA           (rs_to_a),      // interconnect
   .outB           (rt_to_b),      // interconnect
-  .clk            (clock),
-  .rs             (rs), 
-  .rt             (rt), 
-  .rd             (rd),
-  .write_enabled  (we)
+  .rs             (rs),           // knob
+  .rt             (rt),           // knob
+  .rd             (rd),           // knob
+  .write_enabled  (we)            // knob
 );
 
 // Clock Generator
 initial 
   begin
-    clock = 0;
+    #5 clock = 0;
     forever
       #5 clock = ~clock;
   end
@@ -75,13 +76,13 @@ initial
     #100
     
     // add $r4, $r4, $r2
-    #10 control=4'h2; rd=5'd5; rs=5'd3; rt=5'd0; we=1'b1; 
+    #10 control=4'h2; rd=5'd5; rs=5'd5; rt=5'd2; we=1'b1; 
     // add $r4, $r4, $r2
-    #10 control=4'h2; rd=5'd5; rs=5'd3; rt=5'd0; we=1'b1; 
+    #10 control=4'h2; rd=5'd5; rs=5'd5; rt=5'd2; we=1'b1; 
     // add $r4, $r4, $r2
-    #10 control=4'h2; rd=5'd5; rs=5'd3; rt=5'd0; we=1'b1; 
+    #10 control=4'h2; rd=5'd5; rs=5'd5; rt=5'd2; we=1'b1; 
     // add $r4, $r4, $r2
-    #10 control=4'h2; rd=5'd5; rs=5'd3; rt=5'd0; we=1'b1; 
+    #10 control=4'h2; rd=5'd5; rs=5'd5; rt=5'd2; we=1'b1; 
 
     // sub $r4, $r4, $r2
     #10 control=4'h6; rd=5'd5; rs=5'd3; rt=5'd0; we=1'b1; 

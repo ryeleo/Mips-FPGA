@@ -30,7 +30,7 @@ rf_32 dut (
 // Clock Generator
 initial 
   begin
-    clock = 0;
+    #5 clock = 0;
     forever
       #5 clock = ~clock;
   end

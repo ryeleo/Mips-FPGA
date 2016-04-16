@@ -21,22 +21,22 @@ module alu_32(
   input         clk,
   input [31:0]	s, t,
   input [3:0]	  control,
-  output	      cout, zero, overflow,
-  output [31:0]	result
+  output reg	      cout, zero, overflow,
+  output reg [31:0]	result
 );
 
-// Using continuous assignment
-assign overflow = cout;
-
-assign zero = (result == 32'b0) ? 1 : 0;
-
-assign {cout, result}
-  = ( control == 4'h0 ) ?   ( s & t )
-  : ( control == 4'h1 ) ?   ( s | t )
-  : ( control == 4'h2 ) ?   ( s + t )
-  : ( control == 4'h6 ) ?   ( s - t )
-  : ( control == 4'h7 ) ?   ( s < t ) ? 32'b1 :  32'b0
-  : ( control == 4'hC ) ?   (~(s|t) )
-  : 32'bx;
-
+always @ (posedge clk) 
+  begin
+    case(control)
+      4'h0    : {cout,result} = ( s & t );
+      4'h1    : {cout,result} = ( s | t );
+      4'h2    : {cout,result} = ( s + t );
+      4'h6    : {cout,result} = ( s - t );
+      4'h7    : {cout,result} = ( s < t ) ? 32'b1 :  32'b0;
+      4'hC    : {cout,result} = (~(s|t) );
+      default : {cout,result} = 33'bx;
+    endcase
+    zero = (result == 32'b0) ? 1 : 0;
+    overflow = cout;
+  end
 endmodule
