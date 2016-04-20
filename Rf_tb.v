@@ -2,7 +2,7 @@
 // RegisterFile (RF) Module Testbench
 
 `timescale 1ns / 1ns
-module rf_32_test;
+module test_rf_32;
 
 // The reg/nets we will maniupulate/monitor for testing
 reg         clock;    //clock

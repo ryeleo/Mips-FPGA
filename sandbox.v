@@ -1,6 +1,7 @@
 // 2016 Ryan Leonard
 // Sandbox Module
 
+`timescale 1ns / 1ns
 module sandbox();
 
 reg [7:0] a, b;
