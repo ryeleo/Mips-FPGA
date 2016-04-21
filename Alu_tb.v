@@ -6,6 +6,7 @@ module test_alu_32;
 
 // The reg/nets we will maniupulate/monitor for testing
 reg         clock;    //clock
+reg         reset;    //reset
 reg [31:0]	a;        //input
 reg [31:0]	b;        //input
 reg [3:0]	  control;  //input
@@ -17,6 +18,7 @@ wire [31:0]	result;   //out
 // build a version of the Design Under Test (dut)
 alu_32 dut(
   .clk      (clock),
+  .reset    (reset),
   .s	      (a),
   .t	      (b),
   .control  (control),
