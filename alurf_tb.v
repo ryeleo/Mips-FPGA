@@ -1,7 +1,7 @@
 // 2016 Ryan Leonard
 // ALU Module Testbench
 
-`timescale 1ns / 1ns
+`timescale 1ns / 1ns;
 module test_alu_rf_32;
 
 // The reg/nets we will maniupulate/monitor for testing

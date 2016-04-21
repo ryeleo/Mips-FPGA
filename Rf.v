@@ -6,7 +6,7 @@
 //  using the 'memories' data structure as discussed in:
 //    http://www.verilogtutorial.info/chapter_3.htm
 
-`timescale 1ns / 1ns
+`timescale 1ns / 1ns;
 module rf_32(
   input wire        clk,
   input wire [4:0]  rs, rt, rd,
