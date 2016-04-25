@@ -186,13 +186,14 @@ begin // BEG test
     #10;
   end
 end // END testing
-
 // Basic console output
 initial 
-  begin
-    $monitor("%d, %d(read_addr_s), %d(read_addr_t), %d(write_addr), %b(write_enabled), %d(write_data), %d(read_data_s), %d(read_data_t)", 
-      $time, read_addr_s, read_addr_t, write_addr, write_enabled, write_data, read_data_s, read_data_t); 
-    //$monitor("RF: %p", dut.register_file);
-  end
+begin
+  $display("Time || read_addr_s, read_addr_t, write_addr || write_enabled || write_data, read_data_s, read_data_t");
+  $monitor("%d || %d, %d, %d || %b || %h, %h, %h",
+    $time, read_addr_s, read_addr_t, 
+    write_addr, write_enabled, write_data, 
+    read_data_s, read_data_t); 
+end
 
 endmodule

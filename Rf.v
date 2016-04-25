@@ -5,6 +5,10 @@
 //  32 registeread_addr_s each 32 bits in size. This is represented
 //  using the 'memories' data structure as discussed in:
 //    http://www.verilogtutorial.info/chapter_3.htm
+//
+//  Notice that on the positive edge of each clock cycle, we
+//  are performing data write. On the negative edge of each clock
+//  cycle, we are performing data read.
 
 `timescale 1ns / 1ns;
 module rf_32(
