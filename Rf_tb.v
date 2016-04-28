@@ -1,4 +1,4 @@
-// 2016 Ryan Leonawrite_addr
+// 2016 Ryan Leonard
 // RegisterFile (RF) Module Testbench
 
 `timescale 1ns / 1ns;
@@ -6,7 +6,6 @@ module test_rf_32;
 
 // The reg/nets write_enabled will maniupulate/monitor for testing
 reg         clock;            //clock
-reg         reset;            //reset
 reg [4:0]   read_addr_s;      //input
 reg [4:0]   read_addr_t;      //input
 reg [4:0]   write_addr;       //input
@@ -18,7 +17,6 @@ wire [31:0] read_data_t;  //output
 // build a veread_addr_sion of the Design Under Test (dut)
 rf_32 dut (
   .clock          (clock),
-  .reset          (reset),
   .read_addr_s    (read_addr_s), 
   .read_addr_t    (read_addr_t), 
   .write_addr     (write_addr),
@@ -45,19 +43,19 @@ end
 integer i;
 initial
 begin // BEG test
-  reset = 1; 
   read_addr_s=0; 
   read_addr_t=0;
   write_addr=0; 
   write_enabled=0;
   write_data=0;
   #20;
-  reset = 1'b0; // turn off reset for future testing
+
+  $display("==========\nNOTICE: Reg reads happen on the '5s' or negedge of clock while writes on the '10s' or posedge of clock\n");
 
   //////////////////////////////////////////////////////////// 
   /// Testing For initialization Correctness
   //////////////////////////////////////////////////////////// 
-  $display("==========\nCheck Reset all to Zero (using s & t)\n");
+  $display("==========\nCheck all don't care (using s & t)\n");
   for (i=0; i<=30; i=i+2) begin
     read_addr_s=i; 
     read_addr_t=i+1;

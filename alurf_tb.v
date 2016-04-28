@@ -25,7 +25,7 @@ wire [31:0]	result_to_rd; // It is a register for laziness
 
 // Connect our ALU to our Register File (rf)
 alu_32 alu(
-  .clk      (clock),
+  .clock      (clock),
   .s	      (rs_to_a),      // interconnect
   .t	      (rt_to_b),      // interconnect
   .result   (result_to_rd), // interconnect
@@ -36,7 +36,7 @@ alu_32 alu(
 );
 
 rf_32 rf(
-  .clk            (clock),      
+  .clock            (clock),      
   .write_data     (result_to_rd), // interconnect
   .outA           (rs_to_a),      // interconnect
   .outB           (rt_to_b),      // interconnect
@@ -165,8 +165,6 @@ initial
   // NOOP
   rs=5'd0; rt=5'd0; we=1'b0; control=4'h2; rd=5'd0; #50;
 
-  end 
-
   // add $r9, $r0, $r0
   //    Read Regs 
   rs=5'd0; rt=5'd0;                 we=1'b0;          #10; // CC 1
@@ -184,6 +182,7 @@ initial
 
   // NOOP
   rs=5'd0; rt=5'd0; we=1'b0; control=4'h2; rd=5'd0; #50;
+end
 
 // Little helper that makes our string output prettier
 reg  [8*3:0] str_control;
