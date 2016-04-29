@@ -1,7 +1,7 @@
 // 2016 Ryan Leonard
 // RegisterFile (RF) Module Testbench
 
-`timescale 1ns / 1ns;
+`timescale 1ns / 1ns
 module test_rf_32;
 
 // The reg/nets write_enabled will maniupulate/monitor for testing

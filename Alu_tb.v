@@ -1,7 +1,7 @@
 // 2016 Ryan Leonard
 // ALU Module Testbench
 
-`timescale 1ns / 1ns;
+`timescale 1ns / 1ns
 module test_alu_32;
 
 // The reg/nets we will maniupulate/monitor for testing
@@ -126,7 +126,7 @@ begin // BEG Test stimulus
   //////////////////////////////////////////////////////////// 
   /// Testing SUB
   //////////////////////////////////////////////////////////// 
-  $display("==========\nTesting SUB operator\n");
+  $display("==========\nTesting SUB (signed) operator\n");
   control = dut.CONTROL_SUB; 
   input_a=32'd1;        input_b=32'd1; #10;
   input_a=32'd3;        input_b=32'd1; #10;
@@ -136,6 +136,11 @@ begin // BEG Test stimulus
   input_a=32'hFFFFFFFF; input_b=32'h1; #10;
   input_a=32'h0;        input_b=32'hFFFFFFFF; #10;
   input_a=32'hFFFFFFFF; input_b=32'hFFFFFFFF; #10;
+  $display("========== OVERFLOW CONDITIONS ==========");
+  input_a={1'b1,31'b0}; input_b=32'h00000001; #10;//(max neg- 1)
+  input_a=32'h7FFFFFFF; input_b=32'hFFFFFFFF; #10;//(max pos- -1)
+  input_a={1'b1,31'b0}; input_b=32'h7FFFFFFF; #10;//(max neg)
+  input_a=32'h7FFFFFFF; input_b={1'b1,31'b0}; #10;//(max pos)
 
   //////////////////////////////////////////////////////////// 
   /// Testing SLT

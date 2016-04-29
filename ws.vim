@@ -48,16 +48,17 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 set shortmess=aoO
 badd +1 Alu.v
-badd +18 Alu_tb.v
+badd +27 Alu_tb.v
 badd +1 Rf.v
-badd +49 Rf_tb.v
+badd +88 Rf_tb.v
 badd +1 sandbox.v
-badd +0 alurf_tb.v
+badd +1 alurf_tb.v
+badd +24 Alu_Rf.v
 argglobal
 silent! argdel *
 argadd Alu.v
 set stal=2
-edit Alu.v
+edit Alu_Rf.v
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -67,8 +68,8 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 169)
-exe 'vert 2resize ' . ((&columns * 84 + 84) / 169)
+exe 'vert 1resize ' . ((&columns * 67 + 67) / 135)
+exe 'vert 2resize ' . ((&columns * 67 + 67) / 135)
 argglobal
 setlocal keymap=
 setlocal noarabic
@@ -177,11 +178,11 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 10 - ((9 * winheight(0) + 24) / 49)
+let s:l = 5 - ((4 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-10
+5
 normal! 0
 wincmd w
 argglobal
@@ -293,16 +294,15 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 24) / 49)
+let s:l = 3 - ((2 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
+3
 normal! 0
 wincmd w
-2wincmd w
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 169)
-exe 'vert 2resize ' . ((&columns * 84 + 84) / 169)
+exe 'vert 1resize ' . ((&columns * 67 + 67) / 135)
+exe 'vert 2resize ' . ((&columns * 67 + 67) / 135)
 tabedit Alu_tb.v
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -313,8 +313,8 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 81 + 84) / 169)
-exe 'vert 2resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 1resize ' . ((&columns * 65 + 67) / 135)
+exe 'vert 2resize ' . ((&columns * 69 + 67) / 135)
 argglobal
 setlocal keymap=
 setlocal noarabic
@@ -423,11 +423,11 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 27 - ((14 * winheight(0) + 24) / 49)
+let s:l = 26 - ((10 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-27
+26
 normal! 0
 wincmd w
 argglobal
@@ -540,15 +540,15 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 26 - ((25 * winheight(0) + 24) / 49)
+let s:l = 26 - ((19 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 26
 normal! 02|
 wincmd w
-exe 'vert 1resize ' . ((&columns * 81 + 84) / 169)
-exe 'vert 2resize ' . ((&columns * 87 + 84) / 169)
+exe 'vert 1resize ' . ((&columns * 65 + 67) / 135)
+exe 'vert 2resize ' . ((&columns * 69 + 67) / 135)
 tabedit Rf_tb.v
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -559,8 +559,8 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 169)
-exe 'vert 2resize ' . ((&columns * 84 + 84) / 169)
+exe 'vert 1resize ' . ((&columns * 67 + 67) / 135)
+exe 'vert 2resize ' . ((&columns * 67 + 67) / 135)
 argglobal
 setlocal keymap=
 setlocal noarabic
@@ -669,7 +669,7 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 88 - ((37 * winheight(0) + 24) / 49)
+let s:l = 88 - ((29 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -785,15 +785,15 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 19 - ((18 * winheight(0) + 24) / 49)
+let s:l = 19 - ((14 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 19
 normal! 027|
 wincmd w
-exe 'vert 1resize ' . ((&columns * 84 + 84) / 169)
-exe 'vert 2resize ' . ((&columns * 84 + 84) / 169)
+exe 'vert 1resize ' . ((&columns * 67 + 67) / 135)
+exe 'vert 2resize ' . ((&columns * 67 + 67) / 135)
 tabedit sandbox.v
 set splitbelow splitright
 set nosplitbelow
@@ -909,7 +909,7 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 44 - ((43 * winheight(0) + 24) / 49)
+let s:l = 44 - ((33 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt

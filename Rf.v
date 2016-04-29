@@ -10,7 +10,7 @@
 //  are performing data write. On the negative edge of each clock
 //  cycle, we are performing data read.
 
-`timescale 1ns / 1ns;
+`timescale 1ns / 1ns
 module rf_32(
   input wire        clock,
   input wire [4:0]  read_addr_s, read_addr_t, write_addr,

@@ -1,7 +1,7 @@
 // 2016 Ryan Leonard
 // ALU Module Testbench
 
-`timescale 1ns / 1ns;
+`timescale 1ns / 1ns
 module test_alu_rf_32;
 
 // The reg/nets we will maniupulate/monitor for testing
@@ -17,6 +17,7 @@ reg         we;       //input
 wire	      cout;     //out
 wire	      zero;     //out
 wire	      overflow; //out
+wire	      err_invalid_control; //out
 
 // The nets interconnecting our alu and rf
 wire [31:0]	rs_to_a;        
@@ -24,27 +25,19 @@ wire [31:0]	rt_to_b;
 wire [31:0]	result_to_rd; // It is a register for laziness
 
 // Connect our ALU to our Register File (rf)
-alu_32 alu(
-  .clock      (clock),
-  .s	      (rs_to_a),      // interconnect
-  .t	      (rt_to_b),      // interconnect
-  .result   (result_to_rd), // interconnect
-  .control  (control),      // knob
-  .cout     (cout),         // monitor
-  .zero     (zero),         // monitor
-  .overflow (overflow)      // monitor
+alu_rf_32 dut(
+  .clock          (clock),
+  .read_addr_s    (rs),     // knob
+  .read_addr_t    (rt),     // knob
+  .write_addr     (rd),     // knob
+  .write_enabled  (we),     // knob
+  .control        (control),// knob
+  .cout           (cout),   // monitor
+  .zero           (zero),   // monitor
+  .err_overflow   (overflow),// monitor
+  .err_invalid_control   (err_invalid_control)// monitor
 );
 
-rf_32 rf(
-  .clock            (clock),      
-  .write_data     (result_to_rd), // interconnect
-  .outA           (rs_to_a),      // interconnect
-  .outB           (rt_to_b),      // interconnect
-  .rs             (rs),           // knob
-  .rt             (rt),           // knob
-  .rd             (rd),           // knob
-  .write_enabled  (we)            // knob
-);
 
 // Clock Generator
 initial 
@@ -90,12 +83,12 @@ initial
     /// Register Initialization
     //////////////////////////////////////////////////////////// 
     $display("==========\nSetup our Register File by hand\n");
-    rf.register_file[1] = 32'd1;
-    rf.register_file[2] = 32'd16;
-    rf.register_file[3] = 32'd4;
-    rf.register_file[4] = 32'd0;
-    rf.register_file[5] = 32'd0;
-    rf.register_file[10] = 32'd0;
+    dut.regfile.register_file[1] = 32'd1;
+    dut.regfile.register_file[2] = 32'd16;
+    dut.regfile.register_file[3] = 32'd4;
+    dut.regfile.register_file[4] = 32'd0;
+    dut.regfile.register_file[5] = 32'd0;
+    dut.regfile.register_file[10] = 32'd0;
     #10;
 
     //////////////////////////////////////////////////////////// 
@@ -145,7 +138,7 @@ initial
     rd=5'd5; we=1'b1; #10;            // Writeback CC
 
     // Do the branching in verilog logic...
-    while (rf.register_file[5] == 0) begin
+    while (dut.regfile.register_file[5] == 0) begin
       // add $r4, $r4, $r2
       rs=5'd4; rt=5'd2; we=1'b0; #10;  // Register Read CC
       control=4'h2; #10;                // ALU Execution CC
