@@ -32,7 +32,7 @@ alu_32 alu(
   .control  (control),
   .cout     (cout),
   .zero     (zero),
-  .err_overflow (overflow),
+  .err_overflow (err_overflow),
   .err_invalid_control  (err_invalid_control)
 );
 

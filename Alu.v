@@ -41,7 +41,6 @@ parameter
   CONTROL_ADD_UNSIGNED = 4'h3, 
   CONTROL_SUB = 4'h6,
   CONTROL_SLT = 4'h7,
-  CONTROL_SUB_UNSIGNED = 4'h8,
   CONTROL_NOR = 4'hc;
 
 localparam 
