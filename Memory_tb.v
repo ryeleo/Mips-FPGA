@@ -70,6 +70,34 @@ begin // BEG Test stimulus
     address = i; 
     #10;
   end
+
+  $display("==========\n Write then read max value at max addr \n");
+  write_enabled = 1;
+  address = MEMORY_SIZE-1; 
+  input_data = '1; // max number is all 1's
+  #10;
+  write_enabled = 0;
+  address = MEMORY_SIZE-1; 
+  input_data = 0; // for readability
+  #10;
+
+  $display("==========\n Try reading and writing to invalid address\n");
+  write_enabled = 1;
+  address = MEMORY_SIZE; 
+  input_data = '0;
+  #10;
+  write_enabled = 0;
+  address = MEMORY_SIZE; 
+  input_data = '0; 
+  #10;
+  write_enabled = 1;
+  address = -1; 
+  input_data = '0;
+  #10;
+  write_enabled = 0;
+  address = -1; 
+  input_data = '0; 
+  #10;
 end
 
 // Basic console output
