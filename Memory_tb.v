@@ -10,7 +10,9 @@ localparam MEMORY_SIZE = 1000;
 
 // The reg/nets we will maniupulate/monitor for testing
 reg clock;    
-reg write_enabled;
+reg [1:0] read_write_control; // = {1 --> read_enabled, 0 --> write_enabled};
+localparam READ   = 2'b10;
+localparam WRITE  = 2'b01;
 wire valid;
 wire error;
 reg [WORD_SIZE-1:0]	address;  
@@ -27,7 +29,8 @@ memory
   .MEMORY_SIZE (MEMORY_SIZE)
 ) dut(
   .start          (clock),
-  .write_enabled  (write_enabled),
+  .read_enabled   (read_write_control[1]),
+  .write_enabled  (read_write_control[0]),
   .address        (address),
   .input_data     (input_data),
   .valid          (valid),
@@ -55,7 +58,7 @@ begin // BEG Test stimulus
   $display("==========\n Write Values (offset 200) \n");
   for (i=0; i<MEMORY_SIZE; i=i+200) 
   begin
-    write_enabled = 1;
+    read_write_control = WRITE;
     address = i; 
     input_data = i+1;
     #10;
@@ -63,38 +66,37 @@ begin // BEG Test stimulus
   input_data = 0; // for readability in the tests...
 
   $display("==========\nRead Values (offset 100) \n");
-  write_enabled = 0;
   for (i=0; i<MEMORY_SIZE; i=i+100) 
   begin
-    write_enabled = 0;
+    read_write_control = READ;
     address = i; 
     #10;
   end
 
   $display("==========\n Write then read max value at max addr \n");
-  write_enabled = 1;
+  read_write_control = WRITE;
   address = MEMORY_SIZE-1; 
   input_data = '1; // max number is all 1's
   #10;
-  write_enabled = 0;
+  read_write_control = READ;
   address = MEMORY_SIZE-1; 
   input_data = 0; // for readability
   #10;
 
   $display("==========\n Try reading and writing to invalid address\n");
-  write_enabled = 1;
+  read_write_control = WRITE;
   address = MEMORY_SIZE; 
   input_data = '0;
   #10;
-  write_enabled = 0;
+  read_write_control = READ;
   address = MEMORY_SIZE; 
   input_data = '0; 
   #10;
-  write_enabled = 1;
+  read_write_control = WRITE;
   address = -1; 
   input_data = '0;
   #10;
-  write_enabled = 0;
+  read_write_control = READ;
   address = -1; 
   input_data = '0; 
   #10;

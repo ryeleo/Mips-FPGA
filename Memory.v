@@ -1,6 +1,7 @@
 // 2016 Ryan Leonard
 // Memory Module
 //
+// Read/write happenning at same time is unexpected behavior.
 //
 module memory ( 
   start,
@@ -36,7 +37,7 @@ reg [WORD_SIZE:0]  data[MEMORY_SIZE:0];
 
 initial
 begin
-  valid = 0;
+  valid <= 0;
 end
 
 // Begin computing on positive edge of the start signal
