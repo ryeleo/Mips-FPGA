@@ -42,17 +42,20 @@ always @ (posedge start)
 begin
   valid = 0;
 
-  // Perform write to memory if write_enabled bit is high
-  if (write_enabled) 
+  if (!err_invalid_address) 
   begin
-    data[address] = input_data;
-  end
-  else 
-  begin
-    // Will our critical path be just as fast if we remove the
-    // else block and do the output_data read regardless?
-    output_data = data[address];
-    valid = 1;
+    // Perform write to memory if write_enabled bit is high
+    if (write_enabled) 
+    begin
+      data[address] = input_data;
+    end
+    else 
+    begin
+      // Will our critical path be just as fast if we remove the
+      // else block and do the output_data read regardless?
+      output_data = data[address];
+      valid = 1;
+    end
   end
 end
 
