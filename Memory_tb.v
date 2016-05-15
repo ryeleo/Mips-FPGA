@@ -52,21 +52,22 @@ initial
 begin // BEG Test stimulus
   #20;
 
+  $display("==========\n Write Values (offset 200) \n");
+  for (i=0; i<MEMORY_SIZE; i=i+200) 
+  begin
+    write_enabled = 1;
+    address = i; 
+    input_data = i+1;
+    #10;
+  end
+  input_data = 0; // for readability in the tests...
+
   $display("==========\nRead Values (offset 100) \n");
   write_enabled = 0;
   for (i=0; i<MEMORY_SIZE; i=i+100) 
   begin
     write_enabled = 0;
-    address=i; 
-    #10;
-  end
-
-  $display("==========\n Write Values (offset 200) \n");
-  for (i=0; i<MEMORY_SIZE; i=i+200) 
-  begin
-    write_enabled = 1;
-    address=i; 
-    input_data=i+1;
+    address = i; 
     #10;
   end
 end
