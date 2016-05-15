@@ -5,6 +5,7 @@
 module memory ( 
   start,
   write_enabled,
+  read_enabled,
   address,
   input_data,
   valid,
@@ -19,6 +20,7 @@ parameter
 
 input wire                  start;
 input wire 	                write_enabled;
+input wire 	                read_enabled;
 input wire [WORD_SIZE-1:0]	address;
 input wire [WORD_SIZE-1:0]	input_data;
 output reg                  valid;
@@ -47,13 +49,13 @@ begin
     // Perform write to memory if write_enabled bit is high
     if (write_enabled) 
     begin
-      data[address] = input_data;
+      data[address] <= input_data;
     end
-    else 
+    if (read_enabled)
     begin
       // Will our critical path be just as fast if we remove the
       // else block and do the output_data read regardless?
-      output_data = data[address];
+      output_data <= data[address];
       valid = 1;
     end
   end
