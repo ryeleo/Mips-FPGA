@@ -56,6 +56,21 @@ begin // BEG test
   #10;
   instruction = {6'b000001, 26'hffffffff};
   #10;
+
+  $display("==========\nIm slow testing functions... !TODO!\n");
+  instruction = 32'h20100000; #10;
+  instruction = 32'h20090003; #10;
+  instruction = 32'h00000020; #10;
+  instruction = 32'h00000020; #10;
+  instruction = 32'h01295020; #10;
+  instruction = 32'hAE090000; #10;
+  instruction = 32'h00000020; #10;
+  instruction = 32'hAE0A0004; #10;
+  instruction = 32'h8E0B0000; #10;
+  instruction = 32'h8E0C0004; #10;
+  instruction = 32'h00000020; #10;
+  instruction = 32'h00000020; #10;
+  instruction = 32'h016C402A; #10;
 end // END testing
 
 // Basic console output
