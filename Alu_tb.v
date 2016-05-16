@@ -3,17 +3,19 @@
 
 `timescale 1ns / 1ns
 module test_alu_32;
+localparam 
+  WORD_SIZE = 32;
 
 // The reg/nets we will maniupulate/monitor for testing
 reg         clock;
-reg [31:0]	input_a;
-reg [31:0]	input_b;
-reg [4:0]	  control;
+reg [WORD_SIZE-1:0]	input_a;
+reg [WORD_SIZE-1:0]	input_b;
+reg [3:0]	  control;
 wire	      cout;
 wire	      zero;
 wire	      valid;
 wire	      err_overflow;
-wire [31:0]	result;
+wire [WORD_SIZE-1:0]	result;
 wire	      err_invalid_control;
 
 // build a version of the Design Under Test (dut)
@@ -121,8 +123,8 @@ begin // BEG Test stimulus
   input_a=-32'd1;       input_b=32'd1; #10;
   $display("========== OVERFLOW CONDITIONS ==========");
   input_a=32'h7FFFFFFF; input_b=32'h1; #10;         // overflow (max pos + 1)
-  input_a={1'b1,31'b0}; input_b=32'hFFFFFFFF; #10;  // overflow (max neg + -1)
-  input_a={1'b1,31'b0}; input_b={1'b1,31'b0}; #10;  // overflow (max neg)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b=32'hFFFFFFFF; #10;  // overflow (max neg + -1)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b={1'b1,WORD_SIZE-1'b0}; #10;  // overflow (max neg)
   input_a=32'h7FFFFFFF; input_b=32'h7FFFFFFF; #10;  // overflow (max pos)
 
   //////////////////////////////////////////////////////////// 
@@ -139,10 +141,10 @@ begin // BEG Test stimulus
   input_a=32'h0;        input_b=32'hFFFFFFFF; #10;
   input_a=32'hFFFFFFFF; input_b=32'hFFFFFFFF; #10;
   $display("========== OVERFLOW CONDITIONS ==========");
-  input_a={1'b1,31'b0}; input_b=32'h00000001; #10;//(max neg- 1)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b=32'h00000001; #10;//(max neg- 1)
   input_a=32'h7FFFFFFF; input_b=32'hFFFFFFFF; #10;//(max pos- -1)
-  input_a={1'b1,31'b0}; input_b=32'h7FFFFFFF; #10;//(max neg)
-  input_a=32'h7FFFFFFF; input_b={1'b1,31'b0}; #10;//(max pos)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b=32'h7FFFFFFF; #10;//(max neg)
+  input_a=32'h7FFFFFFF; input_b={1'b1,WORD_SIZE-1'b0}; #10;//(max pos)
 
   //////////////////////////////////////////////////////////// 
   /// Testing SLT

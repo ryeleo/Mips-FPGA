@@ -33,17 +33,6 @@ module alu_32 (
   result
 );
 
-input wire        start;
-input wire [WORD_SIZE-1:0]	input_a;
-input wire [WORD_SIZE-1:0]	input_b;
-input wire [4:0]	control;
-output wire       zero;
-output reg        finished;
-output reg	      cout;
-output reg	      err_overflow;
-output reg	      err_invalid_control;
-output reg [WORD_SIZE-1:0]	result;
-
 // Control parameters
 parameter 
   CONTROL_AND = 5'h0, 
@@ -55,13 +44,22 @@ parameter
   CONTROL_NOR = 5'hc,
   OFF = 1'b0,
   ON = 1'b1;
-  
 
 localparam 
   INVALID = 33'bx,
   WORD_SIZE = 32,
   MSB = WORD_SIZE-1; // Most signficant bit
 
+input wire        start;
+input wire [WORD_SIZE-1:0]	input_a;
+input wire [WORD_SIZE-1:0]	input_b;
+input wire [3:0]	control;
+output wire       zero;
+output reg        finished;
+output reg	      cout;
+output reg	      err_overflow;
+output reg	      err_invalid_control;
+output reg [WORD_SIZE-1:0]	result;
 // An intermittent value storage register
 reg [WORD_SIZE-1:0] tmp;
 
