@@ -35,6 +35,7 @@ module alu_32 (
 
 // Control parameters
 parameter 
+  CONTROL_SIGNAL_SIZE = 4, // # of bits in control signal
   CONTROL_AND = 5'h0, 
   CONTROL_OR  = 5'h1, 
   CONTROL_ADD = 5'h2, 
@@ -53,7 +54,7 @@ localparam
 input wire        start;
 input wire [WORD_SIZE-1:0]	input_a;
 input wire [WORD_SIZE-1:0]	input_b;
-input wire [3:0]	control;
+input wire [CONTROL_SIGNAL_SIZE-1:0]	control;
 output wire       zero;
 output reg        finished;
 output reg	      cout;
@@ -76,7 +77,7 @@ begin
   {cout,result} = ( input_a + input_b );
   if (input_a[MSB] == input_b[MSB] && // If both input have same sign
       input_a[MSB] != result[MSB])    // and result has different sign
-    err_overflow = 1;
+    err_overflow = ON;
 end
 endtask
 
@@ -131,6 +132,7 @@ begin // BEG main
 
     default: begin
       err_invalid_control = ON; 
+      $display("cannot decode control signal %b: ", control);
     end
   endcase
   finished = ON;
