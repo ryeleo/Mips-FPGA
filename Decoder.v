@@ -1,29 +1,6 @@
 // 2016 Ryan Leonard
 // Decoder Module
-
-module decoder_32(
-  instruction,
-  opcode,
-  rs,
-  rt,
-  rd,
-  shamt,
-  alu_function,
-  immediate,
-  jump_target
-);
-
-input wire [31:0]  instruction;
-
-output wire [5:0] opcode;
-output wire [4:0] rs;
-output wire [4:0] rt;
-output wire [4:0] rd;
-output wire [4:0] shamt;
-output wire [5:0] alu_function;
-output wire [15:0] immediate;
-output wire [25:0] jump_target;
-
+//
 //    R-type
 //  opcode   rs    rt     rd    shamt   alu_function
 //  ______ ______ ______ ______ ______ ______
@@ -43,6 +20,29 @@ output wire [25:0] jump_target;
 // |______|__________________________________|
 //   6bit            26bit
 //
+
+module decoder_32(
+  instruction,
+  opcode,
+  rs,
+  rt,
+  rd,
+  shamt,
+  alu_function,
+  immediate,
+  jump_target
+);
+
+input wire [31:0]  instruction;
+output wire [5:0] opcode;
+output wire [4:0] rs;
+output wire [4:0] rt;
+output wire [4:0] rd;
+output wire [4:0] shamt;
+output wire [5:0] alu_function;
+output wire [15:0] immediate;
+output wire [25:0] jump_target;
+
 assign opcode       = instruction[31:26];
 assign rs           = instruction[25:21];
 assign rt           = instruction[20:16];
