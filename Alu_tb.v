@@ -5,24 +5,26 @@
 module test_alu_32;
 
 // The reg/nets we will maniupulate/monitor for testing
-reg         clock;    //clock
-reg [31:0]	input_a;  //input
-reg [31:0]	input_b;  //input
-reg [3:0]	  control;  //input
-wire	      cout;     //out
-wire	      zero;     //out
-wire	      err_overflow; //out
-wire [31:0]	result;   //out
-wire	      err_invalid_control;    //out
+reg         clock;
+reg [31:0]	input_a;
+reg [31:0]	input_b;
+reg [4:0]	  control;
+wire	      cout;
+wire	      zero;
+wire	      valid;
+wire	      err_overflow;
+wire [31:0]	result;
+wire	      err_invalid_control;
 
 // build a version of the Design Under Test (dut)
 alu_32 dut(
-  .clock    (clock),
+  .start    (clock),
   .input_a  (input_a),
   .input_b  (input_b),
   .control  (control),
   .cout     (cout),
   .zero     (zero),
+  .finished (valid),
   .err_overflow (err_overflow),
   .result   (result),
   .err_invalid_control    (err_invalid_control)
