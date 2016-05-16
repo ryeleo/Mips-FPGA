@@ -34,15 +34,15 @@ module alu_32 (
 );
 
 input wire        start;
-input wire [31:0]	input_a;
-input wire [31:0]	input_b;
+input wire [WORD_SIZE-1:0]	input_a;
+input wire [WORD_SIZE-1:0]	input_b;
 input wire [4:0]	control;
 output wire       zero;
 output reg        finished;
 output reg	      cout;
 output reg	      err_overflow;
 output reg	      err_invalid_control;
-output reg [31:0]	result;
+output reg [WORD_SIZE-1:0]	result;
 
 // Control parameters
 parameter 
@@ -59,10 +59,11 @@ parameter
 
 localparam 
   INVALID = 33'bx,
-  WORD_SIZE = 32;
+  WORD_SIZE = 32,
+  MSB = WORD_SIZE-1; // Most signficant bit
 
 // An intermittent value storage register
-reg [31:0] tmp;
+reg [WORD_SIZE-1:0] tmp;
 
 // Assign our wires for zero and overflow signal 
 // based on the results calculated at the start of 
@@ -70,13 +71,13 @@ reg [31:0] tmp;
 assign zero = (result == 32'b0) ? ON : OFF;
 
 task addition_signed(
-  input [31:0] input_a,
-  input [31:0] input_b,
-  output [31:0] result);
+  input [WORD_SIZE-1:0] input_a,
+  input [WORD_SIZE-1:0] input_b,
+  output [WORD_SIZE-1:0] result);
 begin
   {cout,result} = ( input_a + input_b );
-  if (input_a[31] == input_b[31] && // If both input have same sign
-      input_a[31] != result[31])    // and result has different sign
+  if (input_a[MSB] == input_b[MSB] && // If both input have same sign
+      input_a[MSB] != result[MSB])    // and result has different sign
     err_overflow = 1;
 end
 endtask
@@ -116,7 +117,7 @@ begin // BEG main
     CONTROL_SUB: begin
       tmp = -input_b; 
       addition_signed(input_a, tmp, result);
-      if (tmp[31] == input_b[31]) 
+      if (tmp[MSB] == input_b[MSB]) 
       begin
         err_overflow = ON;
       end
