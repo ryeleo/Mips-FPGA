@@ -52,10 +52,14 @@ parameter
   CONTROL_ADD_UNSIGNED = 5'h3, 
   CONTROL_SUB = 5'h6,
   CONTROL_SLT = 5'h7,
-  CONTROL_NOR = 5'hc;
+  CONTROL_NOR = 5'hc,
+  OFF = 1'b0,
+  ON = 1'b1;
+  
 
 localparam 
-  INVALID = 33'bx;
+  INVALID = 33'bx,
+  WORD_SIZE = 32;
 
 // An intermittent value storage register
 reg [31:0] tmp;
@@ -63,7 +67,7 @@ reg [31:0] tmp;
 // Assign our wires for zero and overflow signal 
 // based on the results calculated at the start of 
 // our clock cycle in the below ALWAYS block.
-assign zero = (result == 32'b0) ? 1'b1 : 1'b0;
+assign zero = (result == 32'b0) ? ON : OFF;
 
 task addition_signed(
   input [31:0] input_a,
@@ -88,59 +92,49 @@ endtask
 // control signal
 always @ (posedge start) 
 begin // BEG main
-  finished = 0;
-  err_invalid_control = 0;
-  err_overflow = 0;
+  finished = OFF;
+  err_invalid_control = OFF;
+  err_overflow = OFF;
   case(control)
     CONTROL_AND: begin
       {cout,result} = ( input_a & input_b );
-      finished = 1;
     end
 
     CONTROL_OR: begin
       {cout,result} = ( input_a | input_b );
-      finished = 1;
     end
 
     CONTROL_ADD: begin
       addition_signed(input_a, input_b, result);
-      finished = 1;
     end
 
     CONTROL_ADD_UNSIGNED: begin
       addition_unsigned_global();
-      finished = 1;
     end
 
+    // TODO: performance
     CONTROL_SUB: begin
       tmp = -input_b; 
       addition_signed(input_a, tmp, result);
       if (tmp[31] == input_b[31]) 
       begin
-        err_overflow = 1;
-        finished = 0;
-      end
-      else
-      begin
-        finished = 1;
+        err_overflow = ON;
       end
     end
 
     CONTROL_SLT: begin
-      {cout,result} = ( input_a < input_b ) ? 32'b1 :  32'b0;
-      finished = 1;
+      {cout,result} = ( input_a < input_b ) ? ON :  OFF;
     end
 
     CONTROL_NOR: begin
       {cout,result} = (~(input_a|input_b) );
-      finished = 1;
     end
 
     default: begin
-      err_invalid_control = 1'b1; 
-      finished = 0;
+      err_invalid_control = ON; 
     end
   endcase
+  finished = ON;
   
 end // END main
 
