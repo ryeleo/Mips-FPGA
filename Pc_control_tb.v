@@ -12,7 +12,7 @@ module pc_control_test;
 		.reset(reset),
 		.beq(beq),
 		.jump(jump),
-		.branch_addr(branch_addr),
+		.branch_offset(branch_addr),
 		.jump_addr(jump_addr),
 		.pc(new_pc)
 	);
@@ -26,14 +26,20 @@ module pc_control_test;
 	end
 	initial begin
 		$dumpfile("pc_control_32_test");
-		$dumpvar(0, pc_control_32_test);
 		$monitor("                 clk: %b, beq: %b, branch_addr: %d, jump: %b, jump_addr: %d, new_pc %d", clk, beq, branch_addr, jump, jump_addr, new_pc);
-		reset = 1; #2;
-		reset = 0; #2;
+		reset = 1; #1;
+		reset = 0; #1;
 		$display("After reset====================");
-		beq <= 0; jump <= 0; jump_addr = 1000; branch_addr = 2000; #4;
-		beq <= 1; jump <= 0; jump_addr = 1000; branch_addr = 2000; #4;
-		beq <= 0; jump <= 0; jump_addr = 1000; branch_addr = 2000; #4;
+		beq <= 0; jump <= 0; jump_addr = 1000; branch_addr = 2000; #2;
+		beq <= 0; jump <= 1; jump_addr = 1000; branch_addr = 2000; #2;
+		beq <= 0; jump <= 0; jump_addr = 1000; branch_addr = 2000; #2;
+        beq <= 0; jump <= 1; jump_addr = 1000; branch_addr = 2000; #2;
+      	beq <= 0; jump <= 0; jump_addr = 1000; branch_addr = 2000; #2;
+      	beq <= 1; jump <= 0; jump_addr = 1000; branch_addr = 2000; #2;
+      	beq <= 0; jump <= 0; jump_addr = 1000; branch_addr = 2000; #2;
+      	beq <= 1; jump <= 0; jump_addr = 1000; branch_addr = 2000; #2;
+
+
 		$stop;
 
 	end
