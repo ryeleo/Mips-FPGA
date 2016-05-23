@@ -1,7 +1,7 @@
 // 2016 Ryan Leonard
 // Decoder Module Testbench
 //
-module test_decoder_32;
+module decoder_32_test;
 
 reg [31:0] instruction;
 wire [5:0] opcode;
