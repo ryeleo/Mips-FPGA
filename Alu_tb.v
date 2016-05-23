@@ -165,6 +165,7 @@ begin // BEG Test stimulus
   $display("==========\nTesting Invalid operator\n");
   control = 4'hf; 
   input_a=32'd1;          input_b=32'd1; #10;
+  $stop;
 end // END Test stimulus
 
 // Little helper that makes our string output prettier
