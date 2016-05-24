@@ -37,109 +37,109 @@ module control_32(
 		case (opcode)
 			
 			r_type: begin
-				mem_toreg          <= off;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= off;
-				alu_src            <= off;
-				reg_dst            <= on;
-				reg_write          <= on;
-				jump               <= off;
+				mem_toreg          = off;
+				mem_write          = off;
+				mem_read           = off;
+				branch             = off;
+				alu_src            = off;
+				reg_dst            = on;
+				reg_write          = on;
+				jump               = off;
 
-				alu_op             <= artih_alu;
-				err_illegal_opcode <= off;
+				alu_op             = artih_alu;
+				err_illegal_opcode = off;
 
 			end
 
 			lw: begin
-				mem_toreg          <= on;
-				mem_write          <= off;
-				mem_read           <= on;
-				branch             <= off;
-				alu_src            <= on;
-				reg_dst            <= off;
-				reg_write          <= on;
-				jump               <= off;
+				mem_toreg          = on;
+				mem_write          = off;
+				mem_read           = on;
+				branch             = off;
+				alu_src            = on;
+				reg_dst            = off;
+				reg_write          = on;
+				jump               = off;
 				
-				alu_op             <= mem_alu;
-				err_illegal_opcode <= off;
+				alu_op             = mem_alu;
+				err_illegal_opcode = off;
 
 			end
 
 			sw: begin
-				mem_toreg          <= off;
-				mem_write          <= on;
-				mem_read           <= off;
-				branch             <= off;
-				alu_src            <= on;
-				reg_dst            <= off;
-				reg_write          <= off;
-				jump               <= off;
+				mem_toreg          = off;
+				mem_write          = on;
+				mem_read           = off;
+				branch             = off;
+				alu_src            = on;
+				reg_dst            = off;
+				reg_write          = off;
+				jump               = off;
 
-				alu_op     		   <= mem_alu;
-				err_illegal_opcode <= off;
+				alu_op     	          <= mem_alu;
+				err_illegal_opcode = off;
 
 			end
 
 			beq: begin
-				mem_toreg          <= off;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= on;
-				alu_src            <= off;
-				reg_dst            <= off;
-				reg_write          <= off;
-				jump               <= off;
+				mem_toreg          = off;
+				mem_write          = off;
+				mem_read           = off;
+				branch             = on;
+				alu_src            = off;
+				reg_dst            = off;
+				reg_write          = off;
+				jump               = off;
 
-				alu_op             <= beq_alu;
-				err_illegal_opcode <= off;
+				alu_op             = beq_alu;
+				err_illegal_opcode = off;
 
 			end
 
 			addi: begin
-				mem_toreg          <= off;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= off;
-				alu_src            <= on;
-				reg_dst            <= off;
-				reg_write          <= on;
-				jump               <= off;
+				mem_toreg          = off;
+				mem_write          = off;
+				mem_read           = off;
+				branch             = off;
+				alu_src            = on;
+				reg_dst            = off;
+				reg_write          = on;
+				jump               = off;
 
-				alu_op             <= mem_alu;
-				err_illegal_opcode <= off;
+				alu_op             = mem_alu;
+				err_illegal_opcode = off;
 
 			end
 
 			j: begin
-				mem_toreg          <= off;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= off;
-				alu_src            <= off;
-				reg_dst            <= off;
-				reg_write          <= off;
-				jump               <= on;
+				mem_toreg          = off;
+				mem_write          = off;
+				mem_read           = off;
+				branch             = off;
+				alu_src            = off;
+				reg_dst            = off;
+				reg_write          = off;
+				jump               = on;
 
-				jump 	           <= on;
-				alu_op             <= jump_code;
-				err_illegal_opcode <= off;
+				jump 	           = on;
+				alu_op             = jump_code;
+				err_illegal_opcode = off;
 
 			end
 
 			default: begin 
-				mem_toreg          <= off;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= off;
-				alu_src            <= off;
-				reg_dst            <= off;
-				reg_write          <= off;
-				jump               <= off;
+				mem_toreg          = off;
+				mem_write          = off;
+				mem_read           = off;
+				branch             = off;
+				alu_src            = off;
+				reg_dst            = off;
+				reg_write          = off;
+				jump               = off;
 
-				alu_op             <= 2'b00;
-				err_illegal_opcode <= on;
-				$display("cannot decode instruction %b\n", opcode);
+				alu_op             = 2'b00;
+				err_illegal_opcode = on;
+				$display("cannot deode instruction %b\n", opcode);
 			end
 		endcase
 	end
