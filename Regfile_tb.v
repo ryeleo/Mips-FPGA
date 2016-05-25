@@ -1,18 +1,18 @@
 // 2016 Ryan Leonard
 // RegisterFile (RF) Module Testbench
 
-`timescale 1ns / 1ns
 module test_rf_32;
 
 // The reg/nets write_enabled will maniupulate/monitor for testing
-reg         clock;            //clock
-reg [4:0]   read_addr_s;      //input
-reg [4:0]   read_addr_t;      //input
-reg [4:0]   write_addr;       //input
-reg [31:0]  write_data;       //input
-reg         write_enabled;    //input
-wire [31:0] read_data_s;  //output
-wire [31:0] read_data_t;  //output
+reg         start;
+reg [4:0]   read_addr_s;
+reg [4:0]   read_addr_t;
+reg [4:0]   write_addr;
+reg [31:0]  write_data;
+reg         write_enabled;
+wire        finish;
+wire [31:0] read_data_s;
+wire [31:0] read_data_t;
 
 // build a veread_addr_sion of the Design Under Test (dut)
 rf_32 dut (
