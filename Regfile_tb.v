@@ -27,13 +27,18 @@ rf_32 dut (
   .outB           (read_data_t)
 );
 
+/**********************************************************
+*
+* Assertion Methods
+*
+**********************************************************/
 task assert_equal(
   input [31:0] expected,
   input [31:0] observed);
-begin
-  if (expected != observed)
-  $display("ASSERTION EQUAL FAIL: %p != %p", expected, observed);
-end
+  begin
+    if (expected != observed)
+    $display("ASSERTION EQUAL FAIL: %p != %p", expected, observed);
+  end
 endtask
 
 task assert_register_value(
@@ -46,7 +51,14 @@ task assert_register_value(
   end
 endtask
 
-task run();
+
+
+/**********************************************************
+*
+* Setup and helpers
+*
+**********************************************************/
+task run_dut();
   begin
     start = 0; 
     #5;
@@ -57,16 +69,26 @@ task run();
   end
 endtask
 
-// Test stimulus
+initial  // Set default values
+  begin
+    start=0;
+    read_addr_s=0; 
+    read_addr_t=0;
+    write_addr=0; 
+    write_data=0;
+    write_enabled=0;
+  end
+
+
+/**********************************************************
+*
+* Test Stimulus
+*
+**********************************************************/
 integer i;
 initial
 begin // BEG test
-  read_addr_s=0; 
-  read_addr_t=0;
-  write_addr=0; 
-  write_enabled=0;
-  write_data=0;
-  run();
+  run_dut();
 
   //////////////////////////////////////////////////////////// 
   /// Testing For initialization Correctness
@@ -75,7 +97,7 @@ begin // BEG test
   for (i=0; i<=30; i=i+2) begin
     read_addr_s = i; 
     read_addr_t = i+1;
-    run();
+    run_dut();
     assert_equal(read_data_s, 32'bx);
     assert_equal(read_data_t, 32'bx);
 
@@ -87,21 +109,19 @@ begin // BEG test
   /// Testing Write
   //////////////////////////////////////////////////////////// 
   $display("==========\nWrite Some Data to Register File\n");
-  read_addr_s=0;  
-  read_addr_t=0;
 
   write_enabled=1'b1; 
   write_addr=5'd0; 
   write_data=32'hDEADBEEF;
-  run();
+  run_dut();
 
   write_addr=5'd1; 
   write_data=32'h00000000;
-  run();
+  run_dut();
 
   write_addr=5'd2; 
   write_data=32'h11111111;
-  run();
+  run_dut();
 
   write_addr=5'd3; 
   write_data=32'h22222222;
