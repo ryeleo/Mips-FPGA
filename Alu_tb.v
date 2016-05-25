@@ -3,26 +3,30 @@
 
 `timescale 1ns / 1ns
 module test_alu_32;
+localparam 
+  WORD_SIZE = 32;
 
 // The reg/nets we will maniupulate/monitor for testing
-reg         clock;    //clock
-reg [31:0]	input_a;  //input
-reg [31:0]	input_b;  //input
-reg [3:0]	  control;  //input
-wire	      cout;     //out
-wire	      zero;     //out
-wire	      err_overflow; //out
-wire [31:0]	result;   //out
-wire	      err_invalid_control;    //out
+reg         clock;
+reg [WORD_SIZE-1:0]	input_a;
+reg [WORD_SIZE-1:0]	input_b;
+reg [3:0]	  control;
+wire	      cout;
+wire	      zero;
+wire	      valid;
+wire	      err_overflow;
+wire [WORD_SIZE-1:0]	result;
+wire	      err_invalid_control;
 
 // build a version of the Design Under Test (dut)
 alu_32 dut(
-  .clock    (clock),
+  .start    (clock),
   .input_a  (input_a),
   .input_b  (input_b),
   .control  (control),
   .cout     (cout),
   .zero     (zero),
+  .finished (valid),
   .err_overflow (err_overflow),
   .result   (result),
   .err_invalid_control    (err_invalid_control)
@@ -119,8 +123,8 @@ begin // BEG Test stimulus
   input_a=-32'd1;       input_b=32'd1; #10;
   $display("========== OVERFLOW CONDITIONS ==========");
   input_a=32'h7FFFFFFF; input_b=32'h1; #10;         // overflow (max pos + 1)
-  input_a={1'b1,31'b0}; input_b=32'hFFFFFFFF; #10;  // overflow (max neg + -1)
-  input_a={1'b1,31'b0}; input_b={1'b1,31'b0}; #10;  // overflow (max neg)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b=32'hFFFFFFFF; #10;  // overflow (max neg + -1)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b={1'b1,WORD_SIZE-1'b0}; #10;  // overflow (max neg)
   input_a=32'h7FFFFFFF; input_b=32'h7FFFFFFF; #10;  // overflow (max pos)
 
   //////////////////////////////////////////////////////////// 
@@ -137,10 +141,10 @@ begin // BEG Test stimulus
   input_a=32'h0;        input_b=32'hFFFFFFFF; #10;
   input_a=32'hFFFFFFFF; input_b=32'hFFFFFFFF; #10;
   $display("========== OVERFLOW CONDITIONS ==========");
-  input_a={1'b1,31'b0}; input_b=32'h00000001; #10;//(max neg- 1)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b=32'h00000001; #10;//(max neg- 1)
   input_a=32'h7FFFFFFF; input_b=32'hFFFFFFFF; #10;//(max pos- -1)
-  input_a={1'b1,31'b0}; input_b=32'h7FFFFFFF; #10;//(max neg)
-  input_a=32'h7FFFFFFF; input_b={1'b1,31'b0}; #10;//(max pos)
+  input_a={1'b1,WORD_SIZE-1'b0}; input_b=32'h7FFFFFFF; #10;//(max neg)
+  input_a=32'h7FFFFFFF; input_b={1'b1,WORD_SIZE-1'b0}; #10;//(max pos)
 
   //////////////////////////////////////////////////////////// 
   /// Testing SLT
@@ -161,6 +165,7 @@ begin // BEG Test stimulus
   $display("==========\nTesting Invalid operator\n");
   control = 4'hf; 
   input_a=32'd1;          input_b=32'd1; #10;
+  $stop;
 end // END Test stimulus
 
 // Little helper that makes our string output prettier
