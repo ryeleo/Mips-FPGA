@@ -23,6 +23,10 @@ module rf_32(
   outB
 );
 
+parameter
+  OFF = 1'b0,
+  ON = 1'b1;
+
 localparam 
   REG_SIZE = 32,
   REGFILE_SIZE = 32,
@@ -47,20 +51,16 @@ reg [REG_SIZE-1:0] register_file[REGFILE_SIZE-1:0];
 //  reg_SIZE-1        reg_COUNT-1
 //  (register size)   (register file size)
 
-// Using an always block for inputs into our memory array
-always @ (posedge clock)
-begin // BEG logic
-  if (write_enabled && write_addr != 5'd0)
-    register_file[write_addr] <= write_data;
-  register_file[0] = ZERO;
-end // END logic
 
-// Read at the negative edge of the clock to ensure 'read-after-write' doesn't
-// occur
-always @ (negedge clock)
-begin
-  outA <= register_file[read_addr_s];
-  outB <= register_file[read_addr_t];
-end
+always @ (posedge start)
+begin // BEG logic
+  finish = OFF;
+  outA = register_file[read_addr_s];
+  outB = register_file[read_addr_t];
+  if (write_enabled)
+    register_file[write_addr] = write_data;
+  register_file[0] = ZERO;
+  finish = ON;
+end // END logic
 
 endmodule
