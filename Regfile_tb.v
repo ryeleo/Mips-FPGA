@@ -80,10 +80,6 @@ task run_dut();
   end
 endtask
 
-initial  // Set default values
-  begin
-    reset();
-  end
 
 
 /**********************************************************
@@ -94,12 +90,12 @@ initial  // Set default values
 integer i;
 initial
 begin // BEG test
-  run_dut();
 
   //////////////////////////////////////////////////////////// 
   /// Testing For initialization Correctness
   //////////////////////////////////////////////////////////// 
   $display("==========\nCheck all don't care (using s & t)\n");
+  reset();
   for (i=0; i<=30; i=i+2) begin
     read_addr_s = i; 
     read_addr_t = i+1;
@@ -115,8 +111,9 @@ begin // BEG test
   /// Testing Write
   //////////////////////////////////////////////////////////// 
   $display("==========\nWrite Some Data to Register File\n");
-
+  reset();
   write_enabled=1'b1; 
+
   write_addr=5'd0; 
   write_data=32'hDEADBEEF;
   run_dut();
@@ -249,17 +246,16 @@ begin // BEG test
   //////////////////////////////////////////////////////////// 
   /// Testing RS and RT indapendently
   //////////////////////////////////////////////////////////// 
-  write_enabled=0;
-  read_addr_s=0;
-  read_addr_t=0;
-  write_data=32'h0;
   $display("==========\nRead (RS) Some From Register File\n");
+  reset();
   for (i=0; i<32; i=i+1) 
   begin
     read_addr_s=i; 
     run_dut();
   end
+
   $display("==========\nRead (RT) Some From Register File\n");
+  reset();
   for (i=0; i<32; i=i+1) 
   begin
     read_addr_t=i; 
