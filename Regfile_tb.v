@@ -1,7 +1,7 @@
 // 2016 Ryan Leonard
 // RegisterFile (RF) Module Testbench
 
-module test_rf_32;
+module rf_32_test;
 
 // The reg/nets write_enabled will maniupulate/monitor for testing
 reg         start;
@@ -16,28 +16,46 @@ wire [31:0] read_data_t;
 
 // build a veread_addr_sion of the Design Under Test (dut)
 rf_32 dut (
-  .clock          (clock),
+  .start          (start),
   .read_addr_s    (read_addr_s), 
   .read_addr_t    (read_addr_t), 
   .write_addr     (write_addr),
   .write_data     (write_data),
   .write_enabled  (write_enabled),
+  .finish         (finish), 
   .outA           (read_data_s), 
   .outB           (read_data_t)
 );
 
-
-// Clock Generator
-initial 
+task assert_equal(
+  input [31:0] expected,
+  input [31:0] observed);
 begin
-  clock = 1; 
-  #5;
-  forever
-  begin
-    clock = ~clock; 
-    #5;
-  end
+  if (expected != observed)
+  $display("ASSERTION EQUAL FAIL: %p != %p", expected, observed);
 end
+endtask
+
+task assert_register_value(
+  input [31:0] expected,
+  input [4:0] register_addr
+); 
+  begin
+    if (dut.register_file[register_addr] != expected)
+      $display("ASSERTION FAIL: reg[%p] value mismatch \n  expected: %p\n  actual: %p", register_addr, expected, dut.register_file[register_addr]);
+  end
+endtask
+
+task run();
+  begin
+    start = 0; 
+    #5;
+    start = 1; 
+    #5;
+    if (finish != 1)
+      $display("FAIL: finish bit was not set");
+  end
+endtask
 
 // Test stimulus
 integer i;
@@ -48,18 +66,21 @@ begin // BEG test
   write_addr=0; 
   write_enabled=0;
   write_data=0;
-  #20;
-
-  $display("==========\nNOTICE: Reg reads happen on the '5s' or negedge of clock while writes on the '10s' or posedge of clock\n");
+  run();
 
   //////////////////////////////////////////////////////////// 
   /// Testing For initialization Correctness
   //////////////////////////////////////////////////////////// 
   $display("==========\nCheck all don't care (using s & t)\n");
   for (i=0; i<=30; i=i+2) begin
-    read_addr_s=i; 
-    read_addr_t=i+1;
-    #10;
+    read_addr_s = i; 
+    read_addr_t = i+1;
+    run();
+    assert_equal(read_data_s, 32'bx);
+    assert_equal(read_data_t, 32'bx);
+
+    start = 0;
+    #5;
   end
 
   //////////////////////////////////////////////////////////// 
@@ -68,16 +89,20 @@ begin // BEG test
   $display("==========\nWrite Some Data to Register File\n");
   read_addr_s=0;  
   read_addr_t=0;
+
   write_enabled=1'b1; 
   write_addr=5'd0; 
   write_data=32'hDEADBEEF;
-  #10;
+  run();
+
   write_addr=5'd1; 
   write_data=32'h00000000;
-  #10 
+  run();
+
   write_addr=5'd2; 
   write_data=32'h11111111;
-  #10;
+  run();
+
   write_addr=5'd3; 
   write_data=32'h22222222;
   #10;
@@ -184,14 +209,15 @@ begin // BEG test
     #10;
   end
 end // END testing
+
 // Basic console output
 initial 
 begin
-  $display("Time || read_addr_s, read_addr_t, write_addr || write_enabled || write_data, read_data_s, read_data_t");
-  $monitor("%d || %d, %d, %d || %b || %h, %h, %h",
+  $display("Time || read_addr_s, read_addr_t, write_addr || write_enabled || write_data, read_data_s, read_data_t || finish");
+  $monitor("%d || %d, %d, %d || %b || %h, %h, %h || %b",
     $time, read_addr_s, read_addr_t, 
     write_addr, write_enabled, write_data, 
-    read_data_s, read_data_t); 
+    read_data_s, read_data_t, finish); 
 end
 
 endmodule

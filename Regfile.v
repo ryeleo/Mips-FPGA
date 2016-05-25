@@ -10,6 +10,8 @@
 //  are performing data write. On the negative edge of each clock
 //  cycle, we are performing data read.
 
+// TODO: How do we make the finish bit work as expected?
+
 module rf_32(
   start,
   read_addr_s, 
