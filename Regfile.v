@@ -12,12 +12,25 @@
 
 `timescale 1ns / 1ns
 module rf_32(
-  input wire        clock,
-  input wire [4:0]  read_addr_s, read_addr_t, write_addr,
-  input wire        write_enabled,
-  input wire [31:0] write_data,
-  output reg [31:0] outA, outB
+  start,
+  read_addr_s, 
+  read_addr_t, 
+  write_addr,
+  write_enabled,
+  write_data,
+  finish,
+  outA, 
+  outB
 );
+input wire        clock;
+input wire [4:0]  read_addr_s;
+input wire [4:0]  read_addr_t;
+input wire [4:0]  write_addr;
+input wire        write_enabled;
+input wire [31:0] write_data;
+output reg        finish;
+output reg [31:0] outA;
+output reg [31:0] outB;
 
 // A 'memories' data structure representing:
 //    32 registeread_addr_s each 32 bits
