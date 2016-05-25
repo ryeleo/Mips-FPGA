@@ -22,7 +22,13 @@ module rf_32(
   outA, 
   outB
 );
-input wire        clock;
+localparam 
+  REG_SIZE = 32,
+  REGFILE_SIZE = 32,
+  INDEX_SIZE = 5,
+  ZERO = 32'b0;
+
+input wire        start;
 input wire [4:0]  read_addr_s;
 input wire [4:0]  read_addr_t;
 input wire [4:0]  write_addr;
@@ -40,10 +46,10 @@ reg [31:0] register_file[31:0];
 //  reg_SIZE-1        reg_COUNT-1
 //  (register size)   (register file size)
 
-// Set 
+// Set zero register to 0
 initial 
 begin
-  register_file[0] = 32'b0;
+  register_file[0] = ZERO;
 end
 
 
