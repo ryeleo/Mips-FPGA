@@ -47,19 +47,12 @@ reg [REG_SIZE-1:0] register_file[REGFILE_SIZE-1:0];
 //  reg_SIZE-1        reg_COUNT-1
 //  (register size)   (register file size)
 
-// Set zero register to 0
-initial 
-begin
-  register_file[0] = ZERO;
-end
-
-
 // Using an always block for inputs into our memory array
-integer i;
 always @ (posedge clock)
 begin // BEG logic
   if (write_enabled && write_addr != 5'd0)
     register_file[write_addr] <= write_data;
+  register_file[0] = ZERO;
 end // END logic
 
 // Read at the negative edge of the clock to ensure 'read-after-write' doesn't
