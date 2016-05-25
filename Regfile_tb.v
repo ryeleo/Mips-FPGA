@@ -55,9 +55,20 @@ endtask
 
 /**********************************************************
 *
-* Setup and helpers
+* 
 *
 **********************************************************/
+task reset();
+  begin
+    start=0;
+    read_addr_s=0; 
+    read_addr_t=0;
+    write_addr=0; 
+    write_data=0;
+    write_enabled=0;
+  end
+endtask
+
 task run_dut();
   begin
     start = 0; 
@@ -71,12 +82,7 @@ endtask
 
 initial  // Set default values
   begin
-    start=0;
-    read_addr_s=0; 
-    read_addr_t=0;
-    write_addr=0; 
-    write_data=0;
-    write_enabled=0;
+    reset();
   end
 
 
@@ -125,108 +131,139 @@ begin // BEG test
 
   write_addr=5'd3; 
   write_data=32'h22222222;
-  #10;
+  run_dut(); 
+
   write_addr=5'd4; 
   write_data=32'h33333333;
-  #10;
+  run_dut(); 
+
   write_addr=5'd5; 
   write_data=32'h44444444;
-  #10;
+  run_dut(); 
+
   write_addr=5'd6; 
   write_data=32'h55555555;
-  #10;
+  run_dut();
+
   write_addr=5'd7; 
   write_data=32'h66666666;
-  #10;
+  run_dut();
+
   write_addr=5'd8; 
   write_data=32'h77777777;
-  #10;
+  run_dut();
+
   write_addr=5'd9; 
   write_data=32'h88888888;
-  #10;
+  run_dut();
+
   write_addr=5'd10; 
   write_data=32'h99999999;
-  #10;
+  run_dut();
+
   write_addr=5'd11; 
   write_data=32'hAAAAAAAA;
-  #10;
+  run_dut();
+
   write_addr=5'd12; 
   write_data=32'hBBBBBBBB;
-  #10;
+  run_dut();
+
   write_addr=5'd13; 
   write_data=32'hCCCCCCCC;
-  #10;
+  run_dut();
+
   write_addr=5'd14; 
   write_data=32'hDDDDDDDD;
-  #10;
+  run_dut();
+
   write_addr=5'd15; 
   write_data=32'hEEEEEEEE;
-  #10;
+  run_dut();
+
   write_addr=5'd16; 
   write_data=32'hFFFFFFFF;
-  #10;
+  run_dut();
+
   write_addr=5'd17; 
   write_data=32'h00000001;
-  #10;
+  run_dut();
+
   write_addr=5'd18; 
   write_data=32'h00000002;
-  #10;
+  run_dut();
+
   write_addr=5'd19; 
   write_data=32'h00000003;
-  #10;
+  run_dut();
+
   write_addr=5'd20; 
   write_data=32'h00000004;
-  #10;
+  run_dut();
+
   write_addr=5'd21; 
   write_data=32'h00000005;
-  #10;
+  run_dut();
+
   write_addr=5'd22; 
   write_data=32'h00000006;
-  #10;
+  run_dut();
+
   write_addr=5'd23; 
   write_data=32'h00000007;
-  #10;
+  run_dut();
+
   write_addr=5'd24; 
   write_data=32'h00000008;
-  #10;
+  run_dut();
+
   write_addr=5'd25; 
   write_data=32'h00000009;
-  #10;
+  run_dut();
+
   write_addr=5'd26; 
   write_data=32'h0000000A;
-  #10;
+  run_dut();
+
   write_addr=5'd27; 
   write_data=32'h0000000B;
-  #10;
+  run_dut();
+
   write_addr=5'd28; 
   write_data=32'h0000000C;
-  #10;
+  run_dut();
+
   write_addr=5'd29; 
   write_data=32'h0000000D;
-  #10;
+  run_dut();
+
   write_addr=5'd30; 
   write_data=32'h0000000E;
-  #10;
+  run_dut();
+
   write_addr=5'd31; 
   write_data=32'hDEADBEEF;
-  #10;
-  write_enabled=0;
-  write_data=32'h0;
+  run_dut();
+
 
   //////////////////////////////////////////////////////////// 
   /// Testing RS and RT indapendently
   //////////////////////////////////////////////////////////// 
+  write_enabled=0;
+  read_addr_s=0;
+  read_addr_t=0;
+  write_data=32'h0;
   $display("==========\nRead (RS) Some From Register File\n");
   for (i=0; i<32; i=i+1) 
   begin
     read_addr_s=i; 
-    #10;
+    run_dut();
   end
   $display("==========\nRead (RT) Some From Register File\n");
   for (i=0; i<32; i=i+1) 
   begin
     read_addr_t=i; 
-    #10;
+    run_dut();
   end
 end // END testing
 
