@@ -8,7 +8,7 @@ module pc_control_32(
 	input wire		start,
 
 	output reg [31:0]       pc,			// pc out
-	output reg 		finished
+	output reg 		finish
 );
 
 	wire [1: 0]             jump_branch;
@@ -18,8 +18,8 @@ module pc_control_32(
 
 	assign extend_jump_address [25:0] = jump_addr;
 
-	always @(posedge start) begin
-
+	always @(*) begin
+		finish              = ~start;
 		if ( reset ) begin
 
 			pc_reg      = 0;
@@ -49,6 +49,6 @@ module pc_control_32(
 		end
 		
 		pc = pc_reg;
-	
+		finish = 1;
 	end
 endmodule

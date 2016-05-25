@@ -15,7 +15,7 @@ module control_32(
 	output reg 	  reg_write,
 	output reg 	  jump,
 
-	output reg	  finished;
+	output reg	  finish,
 	output reg        err_illegal_opcode
 );
 			    /* possible opcodes */
@@ -35,8 +35,8 @@ module control_32(
 			    artih_alu   = 2'b10,
 			    jump_code	= 2'b00;
 	
-	always @(posedge start) begin
-		finish				   = off;
+	always @(*) begin
+		finish			   = ~start;
 		case (opcode)
 			r_type: begin
 				mem_toreg          = off;
@@ -144,6 +144,6 @@ module control_32(
 				$display("cannot deode instruction %b\n", opcode);
 			end
 		endcase
-		finish 				   = on;
+		finish 		           = on;
 	end
 endmodule

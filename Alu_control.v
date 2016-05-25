@@ -5,8 +5,8 @@ module alu_control_32 (
 	
 	output reg [3:0] alu_control,
 	output reg 	 err_illegal_func_code,
-	output reg 	 err_illegal_alu_op
-	output reg 	 finished
+	output reg 	 err_illegal_alu_op,
+	output reg 	 finish
 );
 	reg [3:0] 	 temp_op;
 
@@ -26,11 +26,11 @@ module alu_control_32 (
 		    and_op         = 4'b0000,
 		    or_op          = 4'b0001,
 		    slt_op         = 4'b0111,
-		    default_op     = 4'b0000;
+		    default_op     = 4'b0000;	
 
 
-	always @(posedge start) begin
-		finish	  			      = 1;
+	always @(*) begin
+		finish	  			      = ~start;
 		case(func)	
 			add_func: begin
 				temp_op               = add_op;
@@ -61,8 +61,8 @@ module alu_control_32 (
 
 		case(alu_op)
 			mem_aluop: begin
-				alu_control 	      = add_op;
-				err_illegal_alu_op    = 0;
+				alu_control 	      =  add_op;
+				err_illegal_alu_op    =  0;
 			end
 			beq_aluop: begin
 			  	alu_control           =  sub_op;
@@ -79,6 +79,6 @@ module alu_control_32 (
 			end
 	
 		endcase
-	
-end
+		finish				      = 1;
+	end
 endmodule            

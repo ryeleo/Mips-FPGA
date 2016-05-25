@@ -1,6 +1,6 @@
 module control_test;
   reg   [5:0] opcode;
-
+  reg         start;
   wire 	[1:0] alu_op;
   wire        mem_toreg;
   wire 				mem_write;
@@ -11,8 +11,10 @@ module control_test;
   wire 				reg_write;
   wire 				jump;
   wire        error;
+  wire 	      finish;
 
   control_32 control (
+    .start(start),
     .opcode(opcode),
     .alu_op(alu_op),
     .mem_toreg(mem_toreg),
@@ -23,7 +25,8 @@ module control_test;
     .reg_dst(reg_dst),
     .reg_write(reg_write),
     .jump(jump),
-    .err_illegal_opcode(error)
+    .err_illegal_opcode(error),
+    .finish(finish)
   );
  
   wire [7:0] result;
@@ -40,21 +43,20 @@ module control_test;
     $dumpfile("control_test.vcd");
     $dumpvars(0, control_test);
 
-    $monitor("Opcode: %b, result: %b, ALUop: %b, error: %b", opcode, result, alu_op, error); 
-    opcode <= 6'b0000_00; #5; // r_type 
-
-    opcode <= 6'b1000_11; #5;// lw
-    opcode <= 6'b1010_11; #5;// sw
-    opcode <= 6'b0001_00; #5;// beq 
-    opcode <= 6'b0010_00; #5;// addi  
-    opcode <= 6'b0000_10; #5;// jump
+    $monitor("Opcode: %b, result: %b, ALUop: %b, error: %b, finished %b", opcode, result, alu_op, error, finish); 
+    start <= 1; opcode <= 6'b0000_00; #5; // r_type 
+    start <= 1; opcode <= 6'b1000_11; #5;// lw
+    start <= 1; opcode <= 6'b1010_11; #5;// sw
+    start <= 1; opcode <= 6'b0001_00; #5;// beq 
+    start <= 1; opcode <= 6'b0010_00; #5;// addi  
+    start <= 1; opcode <= 6'b0000_10; #5;// jump
 
     $display("\nError codes\n\n");
-    opcode <= 6'b0011_10; #5;// r_type 
-    opcode <= 6'b1111_11; #5;// lw
-    opcode <= 6'b1110_11; #5;// sw
-    opcode <= 6'b0111_10; #5;// beq 
-    opcode <= 6'b1110_10; #5;// addi  
-    opcode <= 6'b1001_11; #5;// jump
+    start <= 1; opcode <= 6'b0011_10; #5;// r_type 
+    start <= 1; opcode <= 6'b1111_11; #5;// lw
+    start <= 1; opcode <= 6'b1110_11; #5;// sw
+    start <= 1; opcode <= 6'b0111_10; #5;// beq 
+    start <= 1; opcode <= 6'b1110_10; #5;// addi  
+    start <= 1; opcode <= 6'b1001_11; #5;// jump
   end
 endmodule
