@@ -22,6 +22,7 @@ module rf_32(
   outA, 
   outB
 );
+
 localparam 
   REG_SIZE = 32,
   REGFILE_SIZE = 32,
@@ -29,18 +30,18 @@ localparam
   ZERO = 32'b0;
 
 input wire        start;
-input wire [4:0]  read_addr_s;
-input wire [4:0]  read_addr_t;
-input wire [4:0]  write_addr;
+input wire [INDEX_SIZE-1:0]  read_addr_s;
+input wire [INDEX_SIZE-1:0]  read_addr_t;
+input wire [INDEX_SIZE-1:0]  write_addr;
 input wire        write_enabled;
-input wire [31:0] write_data;
+input wire [REG_SIZE-1:0] write_data;
 output reg        finish;
-output reg [31:0] outA;
-output reg [31:0] outB;
+output reg [REG_SIZE-1:0] outA;
+output reg [REG_SIZE-1:0] outB;
 
 // A 'memories' data structure representing:
 //    32 registeread_addr_s each 32 bits
-reg [31:0] register_file[31:0];
+reg [REG_SIZE-1:0] register_file[REGFILE_SIZE-1:0];
 //    |                   |
 //    v                   v
 //  reg_SIZE-1        reg_COUNT-1
