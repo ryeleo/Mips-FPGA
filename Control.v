@@ -1,19 +1,21 @@
 /* information from http://www.cs.columbia.edu/~martha/courses/3827/sp11/slides/9_singleCycleMIPS.pdf 
-	http://www.eng.ucy.ac.cy/mmichael/courses/ECE314/LabsNotes/02/MIPS_Instruction_Coding_With_Hex.pdf
+   http://www.eng.ucy.ac.cy/mmichael/courses/ECE314/LabsNotes/02/MIPS_Instruction_Coding_With_Hex.pdf
 */
 module control_32(
 	input  wire [5:0] opcode,
+	input  wire	  start, 
 
-	output reg 	[1:0] alu_op,
+	output reg  [1:0] alu_op,
 	output reg        mem_toreg,
-	output reg 		  mem_write,
-	output reg 		  mem_read,
-	output reg 		  branch,
-	output reg 		  alu_src,
-	output reg 		  reg_dst,
-	output reg 		  reg_write,
-	output reg 		  jump,
+	output reg 	  mem_write,
+	output reg 	  mem_read,
+	output reg 	  branch,
+	output reg 	  alu_src,
+	output reg 	  reg_dst,
+	output reg 	  reg_write,
+	output reg 	  jump,
 
+	output reg	  finished;
 	output reg        err_illegal_opcode
 );
 			    /* possible opcodes */
@@ -27,15 +29,15 @@ module control_32(
 			    on  	    = 1'b1,
 			    off 	    = 1'b0,
 
-				/* 3 difference aluop */
+    			    /* 3 difference aluop */
 			    mem_alu     = 2'b00,
-			    beq_alu	    = 2'b01,
+			    beq_alu	= 2'b01,
 			    artih_alu   = 2'b10,
 			    jump_code	= 2'b00;
 	
-	always @(*) begin
+	always @(posedge start) begin
+		finish				   = off;
 		case (opcode)
-			
 			r_type: begin
 				mem_toreg          = off;
 				mem_write          = off;
@@ -76,7 +78,7 @@ module control_32(
 				reg_write          = off;
 				jump               = off;
 
-				alu_op     	          <= mem_alu;
+				alu_op     	   = mem_alu;
 				err_illegal_opcode = off;
 
 			end
@@ -142,5 +144,6 @@ module control_32(
 				$display("cannot deode instruction %b\n", opcode);
 			end
 		endcase
+		finish 				   = on;
 	end
 endmodule
