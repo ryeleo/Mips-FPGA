@@ -29,8 +29,8 @@ module alu_control_32 (
 		    default_op     = 4'b0000;	
 
 
-	always @(*) begin
-		finish	  			      = ~start;
+	always @(posedge start) begin
+		finish	  			      = 0;
 		case(func)	
 			add_func: begin
 				temp_op               = add_op;

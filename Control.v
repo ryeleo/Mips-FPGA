@@ -19,24 +19,24 @@ module control_32(
 	output reg        err_illegal_opcode
 );
 			    /* possible opcodes */
-	parameter   r_type      = 6'b0000_00,
-			    lw		    = 6'b1000_11,
-			    sw 		    = 6'b1010_11,
-			    beq 	    = 6'b0001_00,
-			    addi	    = 6'b0010_00,
-			    j    	    = 6'b0000_10,
+	parameter   r_type          = 6'b0000_00,
+		    lw		    = 6'b1000_11,
+		    sw 		    = 6'b1010_11,
+		    beq 	    = 6'b0001_00,
+		    addi	    = 6'b0010_00,
+		    j    	    = 6'b0000_10,
 
-			    on  	    = 1'b1,
-			    off 	    = 1'b0,
+		    on  	    = 1'b1,
+		    off 	    = 1'b0,
 
-    			    /* 3 difference aluop */
-			    mem_alu     = 2'b00,
-			    beq_alu	= 2'b01,
-			    artih_alu   = 2'b10,
-			    jump_code	= 2'b00;
+		    /* 3 difference aluop */
+		    mem_alu     = 2'b00,
+		    beq_alu	= 2'b01,
+		    artih_alu   = 2'b10,
+		    jump_code	= 2'b00;
 	
-	always @(*) begin
-		finish			   = ~start;
+	always @(posedge start) begin
+		finish			           = off;
 		case (opcode)
 			r_type: begin
 				mem_toreg          = off;
@@ -144,6 +144,6 @@ module control_32(
 				$display("cannot deode instruction %b\n", opcode);
 			end
 		endcase
-		finish 		           = on;
+		finish 		                   = on;
 	end
 endmodule

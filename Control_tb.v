@@ -3,13 +3,13 @@ module control_test;
   reg         start;
   wire 	[1:0] alu_op;
   wire        mem_toreg;
-  wire 				mem_write;
-  wire 				mem_read;
-  wire 				branch;
-  wire 				alu_src;
-  wire 				reg_dst;
-  wire 				reg_write;
-  wire 				jump;
+  wire        mem_write;
+  wire        mem_read;
+  wire        branch;
+  wire        alu_src;
+  wire        reg_dst;
+  wire        reg_write;
+  wire        jump;
   wire        error;
   wire 	      finish;
 
@@ -44,19 +44,19 @@ module control_test;
     $dumpvars(0, control_test);
 
     $monitor("Opcode: %b, result: %b, ALUop: %b, error: %b, finished %b", opcode, result, alu_op, error, finish); 
-    start <= 1; opcode <= 6'b0000_00; #5; // r_type 
-    start <= 1; opcode <= 6'b1000_11; #5;// lw
-    start <= 1; opcode <= 6'b1010_11; #5;// sw
-    start <= 1; opcode <= 6'b0001_00; #5;// beq 
-    start <= 1; opcode <= 6'b0010_00; #5;// addi  
-    start <= 1; opcode <= 6'b0000_10; #5;// jump
+    start <= 1; opcode <= 6'b0000_00; #5; start <= 0; #5; // r_type 
+    start <= 1; opcode <= 6'b1000_11; #5; start <= 0; #5;// lw
+    start <= 1; opcode <= 6'b1010_11; #5; start <= 0; #5;// sw
+    start <= 1; opcode <= 6'b0001_00; #5; start <= 0; #5;// beq 
+    start <= 1; opcode <= 6'b0010_00; #5; start <= 0; #5;// addi  
+    start <= 1; opcode <= 6'b0000_10; #5; start <= 0; #5;// jump
 
     $display("\nError codes\n\n");
-    start <= 1; opcode <= 6'b0011_10; #5;// r_type 
-    start <= 1; opcode <= 6'b1111_11; #5;// lw
-    start <= 1; opcode <= 6'b1110_11; #5;// sw
-    start <= 1; opcode <= 6'b0111_10; #5;// beq 
-    start <= 1; opcode <= 6'b1110_10; #5;// addi  
-    start <= 1; opcode <= 6'b1001_11; #5;// jump
+    start <= 1; opcode <= 6'b0011_10; #5; start <= 0; #5;// r_type 
+    start <= 1; opcode <= 6'b1111_11; #5; start <= 0; #5;// lw
+    start <= 1; opcode <= 6'b1110_11; #5; start <= 0; #5;// sw
+    start <= 1; opcode <= 6'b0111_10; #5; start <= 0; #5;// beq 
+    start <= 1; opcode <= 6'b1110_10; #5; start <= 0; #5;// addi  
+    start <= 1; opcode <= 6'b1001_11; #5; start <= 0; #5;// jump
   end
 endmodule
