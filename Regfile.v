@@ -13,13 +13,13 @@
 // TODO: How do we make the finish bit work as expected?
 
 module rf_32(
-  start,
+  clock,
+  read_enabled,
   read_addr_s, 
   read_addr_t, 
-  write_addr,
   write_enabled,
+  write_addr,
   write_data,
-  finish,
   outA, 
   outB
 );
@@ -35,10 +35,11 @@ localparam
   ZERO = 32'b0;
 
 input wire        start;
+input wire        read_enabled;
 input wire [INDEX_SIZE-1:0]  read_addr_s;
 input wire [INDEX_SIZE-1:0]  read_addr_t;
-input wire [INDEX_SIZE-1:0]  write_addr;
 input wire        write_enabled;
+input wire [INDEX_SIZE-1:0]  write_addr;
 input wire [REG_SIZE-1:0] write_data;
 output reg        finish;
 output reg [REG_SIZE-1:0] outA;
