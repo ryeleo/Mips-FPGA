@@ -247,11 +247,11 @@ end // END testing
 // Basic console output
 initial 
 begin
-  $display("Time || read_addr_s, read_addr_t, write_addr || write_enabled || write_data, read_data_s, read_data_t || finish");
+  $display("Time || read_addr_s, read_addr_t, write_addr || write_enabled || write_data, read_data_s, read_data_t");
   $monitor("%d || %d, %d, %d || %b || %h, %h, %h || %b",
     $time, read_addr_s, read_addr_t, 
     write_addr, write_enabled, write_data, 
-    read_data_s, read_data_t, finish); 
+    read_data_s, read_data_t); 
 end
 
 endmodule
