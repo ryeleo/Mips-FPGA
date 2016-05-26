@@ -93,7 +93,7 @@ begin // BEG test
 
   /// Testing Write
   $display("==========\nWrite Some Data to Register File\n");
-  reset( stop );
+  reset();
   write_enabled=1'b1; 
 
   write_addr=5'd0; 
