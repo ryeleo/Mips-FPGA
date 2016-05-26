@@ -7,7 +7,6 @@ localparam
   WORD_SIZE = 32;
 
 // The reg/nets we will maniupulate/monitor for testing
-reg         clock;
 reg [WORD_SIZE-1:0]	input_a;
 reg [WORD_SIZE-1:0]	input_b;
 reg [3:0]	  control;
@@ -20,29 +19,15 @@ wire	      err_invalid_control;
 
 // build a version of the Design Under Test (dut)
 alu_32 dut(
-  .start    (clock),
   .input_a  (input_a),
   .input_b  (input_b),
   .control  (control),
   .cout     (cout),
   .zero     (zero),
-  .finished (valid),
   .err_overflow (err_overflow),
   .result   (result),
   .err_invalid_control    (err_invalid_control)
 );
-
-// Clock Generator (#10 period)
-initial 
-begin
-  clock = 1; 
-  #5;
-  forever
-  begin
-    clock = ~clock; 
-    #5;
-  end
-end
 
 initial
 begin // BEG Test stimulus
