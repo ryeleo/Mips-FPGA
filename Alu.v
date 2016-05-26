@@ -21,12 +21,10 @@
 //  err_invalid_control wire will be raised to high.
   
 module alu_32 (
-  start,
   input_a,
   input_b,
   control,
   zero, 
-  finished,
   cout,
   err_overflow,
   err_invalid_control,
@@ -51,16 +49,15 @@ localparam
   WORD_SIZE = 32,
   MSB = WORD_SIZE-1; // Most signficant bit
 
-input wire        start;
 input wire [WORD_SIZE-1:0]	input_a;
 input wire [WORD_SIZE-1:0]	input_b;
 input wire [CONTROL_SIGNAL_SIZE-1:0]	control;
 output wire       zero;
-output reg        finished;
 output reg	      cout;
 output reg	      err_overflow;
 output reg	      err_invalid_control;
 output reg [WORD_SIZE-1:0]	result;
+
 // An intermittent value storage register
 reg [WORD_SIZE-1:0] tmp;
 
@@ -90,9 +87,8 @@ endtask
 
 // Determine how to set result and cout based on the
 // control signal
-always @ (posedge start) 
+always @ (*)
 begin // BEG main
-  finished = OFF;
   err_invalid_control = OFF;
   err_overflow = OFF;
   case(control)
@@ -135,8 +131,6 @@ begin // BEG main
       $display("cannot decode control signal %b: ", control);
     end
   endcase
-  finished = ON;
-  
 end // END main
 
 endmodule
