@@ -15,53 +15,31 @@ module memory (
 
 // Parametrs to change the size of our system's basic
 parameter 
+  ON = 1'b1,
+  OFF = 1'b0,
   MEMORY_SIZE = 1024, 
   WORD_SIZE = 32; // 32 --> 32bit system, 64 --> 64bit system
 
-input wire                  start;
+input wire                  clock;
 input wire 	                write_enabled;
 input wire 	                read_enabled;
 input wire [WORD_SIZE-1:0]	input_address;
 input wire [WORD_SIZE-1:0]	input_data;
-output reg                  valid;
 output reg [WORD_SIZE-1:0]	output_data;
-output wire                 err_invalid_address;
+output reg                  err_invalid_address;
 
 // A data structure 
 reg [WORD_SIZE:0]  data[MEMORY_SIZE:0];
-//    |                   |
-//    v                   v
-//(datum size)      (memory size)
 
-
-initial
+// Begin computing on positive edge
+always @ (posedge clock) 
 begin
-  valid <= 0;
+  err_invalid_address <= (input_address > MEMORY_SIZE-1) || (input_address < 0) ? ON : OFF;
+  if (read_enabled)
+    output_data <= data[input_address];
+
+  if (write_enabled) 
+    data[input_address] <= input_data;
 end
-
-// Begin computing on positive edge of the start signal
-always @ (posedge start) 
-begin
-  valid = 0;
-
-  if (!err_invalid_address) 
-  begin
-    // Perform write to memory if write_enabled bit is high
-    if (write_enabled) 
-    begin
-      data[input_address] <= input_data;
-    end
-    if (read_enabled)
-    begin
-      // Will our critical path be just as fast if we remove the
-      // else block and do the output_data read regardless?
-      output_data <= data[input_address];
-      valid = 1;
-    end
-  end
-end
-
-assign err_invalid_address = 
-  (input_address > MEMORY_SIZE-1) || (input_address < 0) ? 1 : 0;
 
 endmodule
