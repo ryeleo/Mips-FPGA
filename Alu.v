@@ -78,13 +78,6 @@ begin
 end
 endtask
 
-task addition_unsigned_global();
-begin
-  {cout,result} = ( input_a + input_b );
-  err_overflow = cout;
-end
-endtask
-
 // Determine how to set result and cout based on the
 // control signal
 always @ (*)
@@ -105,7 +98,8 @@ begin // BEG main
     end
 
     CONTROL_ADD_UNSIGNED: begin
-      addition_unsigned_global();
+      {cout,result} = ( input_a + input_b );
+      err_overflow = cout;
     end
 
     // TODO: performance
