@@ -102,6 +102,8 @@ begin // BEG test
   assert_equal(read_data_s, 32'b0);
   assert_equal(read_data_s, 32'b0);
 
+  // TODO: Use the 'assert_' method to ensure that register_file is getting
+  // the inputs we expect 
   /// Testing Write
   $display("==========\nWrite Some Data to Register File\n");
   reset();
