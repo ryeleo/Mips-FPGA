@@ -13,20 +13,16 @@
 // TODO: How do we make the finish bit work as expected?
 
 module rf_32(
-  start,
+  clock,
+  read_enabled,
   read_addr_s, 
   read_addr_t, 
-  write_addr,
   write_enabled,
+  write_addr,
   write_data,
-  finish,
   outA, 
   outB
 );
-
-parameter
-  OFF = 1'b0,
-  ON = 1'b1;
 
 localparam 
   REG_SIZE = 32,
@@ -34,34 +30,34 @@ localparam
   INDEX_SIZE = 5,
   ZERO = 32'b0;
 
-input wire        start;
+input wire        clock;
+input wire        read_enabled;
 input wire [INDEX_SIZE-1:0]  read_addr_s;
 input wire [INDEX_SIZE-1:0]  read_addr_t;
-input wire [INDEX_SIZE-1:0]  write_addr;
 input wire        write_enabled;
+input wire [INDEX_SIZE-1:0]  write_addr;
 input wire [REG_SIZE-1:0] write_data;
-output reg        finish;
 output reg [REG_SIZE-1:0] outA;
 output reg [REG_SIZE-1:0] outB;
 
 // A 'memories' data structure representing:
 //    32 registeread_addr_s each 32 bits
 reg [REG_SIZE-1:0] register_file[REGFILE_SIZE-1:0];
-//    |                   |
-//    v                   v
-//  reg_SIZE-1        reg_COUNT-1
-//  (register size)   (register file size)
 
 
-always @ (posedge start)
+always @ (posedge clock)
 begin // BEG logic
-  finish = OFF;
-  outA = register_file[read_addr_s];
-  outB = register_file[read_addr_t];
+  if (read_enabled)
+  begin
+    // The Right Hand Side will resolve before it could be assigned in the
+    // write enabled block below.
+    outA <= register_file[read_addr_s];
+    outB <= register_file[read_addr_t];
+  end
   if (write_enabled)
-    register_file[write_addr] = write_data;
-  register_file[0] = ZERO;
-  finish = ON;
+    register_file[write_addr] <= write_data;
+
+  register_file[0] <= ZERO;
 end // END logic
 
 endmodule
