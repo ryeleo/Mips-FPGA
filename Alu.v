@@ -74,7 +74,7 @@ begin
   {cout,result} = ( input_a + input_b );
   if (input_a[MSB] == input_b[MSB] && // If both input have same sign
       input_a[MSB] != result[MSB])    // and result has different sign
-    err_overflow = ON;
+    err_overflow <= ON;
 end
 endtask
 
@@ -82,46 +82,62 @@ endtask
 // control signal
 always @ (*)
 begin // BEG main
-  err_invalid_control = OFF;
-  err_overflow = OFF;
+
   case(control)
     CONTROL_AND: begin
-      {cout,result} = ( input_a & input_b );
+      err_invalid_control <= OFF;
+      err_overflow <= OFF;
+      {cout,result} <= ( input_a & input_b );
     end
 
     CONTROL_OR: begin
-      {cout,result} = ( input_a | input_b );
+      err_invalid_control <= OFF;
+      err_overflow <= OFF;
+      {cout,result} <= ( input_a | input_b );
     end
 
     CONTROL_ADD: begin
-      addition_signed(input_a, input_b, result);
+      err_invalid_control <= OFF;
+      {cout,result} = ( input_a + input_b );
+      if (input_a[MSB] == input_b[MSB] && // If both input have same sign
+          input_a[MSB] != result[MSB])    // and result has different sign
+        err_overflow <= ON;
+      else 
+        err_overflow <= OFF;
     end
 
     CONTROL_ADD_UNSIGNED: begin
-      {cout,result} = ( input_a + input_b );
-      err_overflow = cout;
+      err_invalid_control <= OFF;
+      {cout,result} <= ( input_a + input_b );
+      err_overflow <= cout;
     end
 
-    // TODO: performance
+    // TODO: Test this bad boy -- not needed for fibonacci
     CONTROL_SUB: begin
-      tmp = -input_b; 
-      addition_signed(input_a, tmp, result);
-      if (tmp[MSB] == input_b[MSB]) 
-      begin
-        err_overflow = ON;
-      end
+      err_invalid_control <= OFF;
+      {cout,result} = ( input_a - input_b );
+      if (input_a[MSB] == 0 && input_b[MSB] == 1 && result[MSB] == 1 ||
+          input_a[MSB] == 1 && input_b[MSB] == 0 && result[MSB] == 0)
+        err_overflow <= ON;
+      else 
+        err_overflow <= OFF;
     end
 
     CONTROL_SLT: begin
-      {cout,result} = ( input_a < input_b ) ? ON :  OFF;
+      err_invalid_control <= OFF;
+      err_overflow <= OFF;
+      {cout,result} <= ( input_a < input_b ) ? ON :  OFF;
     end
 
     CONTROL_NOR: begin
-      {cout,result} = (~(input_a|input_b) );
+      err_invalid_control <= OFF;
+      err_overflow <= OFF;
+      {cout,result} <= (~(input_a|input_b) );
     end
 
     default: begin
-      err_invalid_control = ON; 
+      err_invalid_control <= ON; 
+      err_overflow <= OFF;
       $display("cannot decode control signal %b: ", control);
     end
   endcase
