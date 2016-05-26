@@ -47,8 +47,11 @@ reg [REG_SIZE-1:0] register_file[REGFILE_SIZE-1:0];
 
 always @ (posedge clock)
 begin // BEG logic
-  outA = register_file[read_addr_s];
-  outB = register_file[read_addr_t];
+  if (read_enabled)
+  begin
+    outA = register_file[read_addr_s];
+    outB = register_file[read_addr_t];
+  end
   if (write_enabled)
     register_file[write_addr] = write_data;
   register_file[0] = ZERO;
