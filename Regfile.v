@@ -49,12 +49,15 @@ always @ (posedge clock)
 begin // BEG logic
   if (read_enabled)
   begin
-    outA = register_file[read_addr_s];
-    outB = register_file[read_addr_t];
+    // The Right Hand Side will resolve before it could be assigned in the
+    // write enabled block below.
+    outA <= register_file[read_addr_s];
+    outB <= register_file[read_addr_t];
   end
   if (write_enabled)
-    register_file[write_addr] = write_data;
-  register_file[0] = ZERO;
+    register_file[write_addr] <= write_data;
+
+  register_file[0] <= ZERO;
 end // END logic
 
 endmodule
