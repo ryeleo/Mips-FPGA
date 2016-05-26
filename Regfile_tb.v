@@ -4,19 +4,20 @@
 module rf_32_test;
 
 // The reg/nets write_enabled will maniupulate/monitor for testing
-reg         start;
+reg         clock;
+reg         read_enabled;
 reg [4:0]   read_addr_s;
 reg [4:0]   read_addr_t;
+reg         write_enabled;
 reg [4:0]   write_addr;
 reg [31:0]  write_data;
-reg         write_enabled;
-wire        finish;
 wire [31:0] read_data_s;
 wire [31:0] read_data_t;
 
 // build a veread_addr_sion of the Design Under Test (dut)
 rf_32 dut (
-  .start          (start),
+  .clock          (clock),
+  .read_enabled   (read_enabled),
   .read_addr_s    (read_addr_s), 
   .read_addr_t    (read_addr_t), 
   .write_addr     (write_addr),
@@ -51,16 +52,9 @@ task assert_register_value(
   end
 endtask
 
-
-
-/**********************************************************
-*
-* 
-*
-**********************************************************/
 task reset();
   begin
-    start=0;
+    read_enabled=0;
     read_addr_s=0; 
     read_addr_t=0;
     write_addr=0; 
@@ -68,19 +62,6 @@ task reset();
     write_enabled=0;
   end
 endtask
-
-task run_dut();
-  begin
-    start = 0; 
-    #5;
-    start = 1; 
-    #5;
-    if (finish != 1)
-      $display("FAIL: finish bit was not set");
-  end
-endtask
-
-
 
 /**********************************************************
 *
@@ -102,9 +83,6 @@ begin // BEG test
     run_dut();
     assert_equal(read_data_s, 32'bx);
     assert_equal(read_data_t, 32'bx);
-
-    start = 0;
-    #5;
   end
 
   //////////////////////////////////////////////////////////// 
