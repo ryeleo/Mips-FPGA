@@ -2,7 +2,7 @@
 // ALU Module Testbench
 
 `timescale 1ns / 1ns
-module test_alu_32;
+module alu_32_test;
 localparam 
   WORD_SIZE = 32;
 
