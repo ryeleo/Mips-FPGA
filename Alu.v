@@ -19,6 +19,9 @@
 //
 //  If an invalid control signal is sent into our ALU, then the
 //  err_invalid_control wire will be raised to high.
+//
+//  Overflow logic implemented based on:
+//    http://teaching.idallen.com/dat2343/10f/notes/040_overflow.txt
   
 module alu_32 (
   input_a,
