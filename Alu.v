@@ -132,7 +132,8 @@ begin // BEG main
     CONTROL_NOR: begin
       err_invalid_control <= OFF;
       err_overflow <= OFF;
-      {cout,result} <= (~(input_a|input_b) );
+      cout <= OFF;
+      result <= (~(input_a|input_b) );
     end
 
     default: begin
