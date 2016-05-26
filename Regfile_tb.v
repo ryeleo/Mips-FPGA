@@ -1,5 +1,4 @@
-// 2016 Ryan Leonard
-// RegisterFile (RF) Module Testbench
+// 2016 Ryan Leonard // RegisterFile (RF) Module Testbench
 
 module rf_32_test;
 
@@ -224,13 +223,11 @@ begin // BEG test
   #10;
 
 
-  //////////////////////////////////////////////////////////// 
-  /// Testing RS and RT indapendently
-  //////////////////////////////////////////////////////////// 
   $display("==========\nRead (RS) Some From Register File\n");
   reset();
   for (i=0; i<32; i=i+1) 
   begin
+    read_enabled=1'b1;
     read_addr_s=i; 
     #10;
   end
@@ -239,6 +236,7 @@ begin // BEG test
   reset();
   for (i=0; i<32; i=i+1) 
   begin
+    read_enabled=1'b1;
     read_addr_t=i; 
     #10;
   end
