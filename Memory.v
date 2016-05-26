@@ -4,12 +4,11 @@
 // Read/write happenning at same time is unexpected behavior.
 //
 module memory ( 
-  start,
+  clock,
   write_enabled,
   read_enabled,
-  address,
+  input_address,
   input_data,
-  valid,
   output_data,
   err_invalid_address
 );
@@ -22,7 +21,7 @@ parameter
 input wire                  start;
 input wire 	                write_enabled;
 input wire 	                read_enabled;
-input wire [WORD_SIZE-1:0]	address;
+input wire [WORD_SIZE-1:0]	input_address;
 input wire [WORD_SIZE-1:0]	input_data;
 output reg                  valid;
 output reg [WORD_SIZE-1:0]	output_data;
@@ -50,19 +49,19 @@ begin
     // Perform write to memory if write_enabled bit is high
     if (write_enabled) 
     begin
-      data[address] <= input_data;
+      data[input_address] <= input_data;
     end
     if (read_enabled)
     begin
       // Will our critical path be just as fast if we remove the
       // else block and do the output_data read regardless?
-      output_data <= data[address];
+      output_data <= data[input_address];
       valid = 1;
     end
   end
 end
 
 assign err_invalid_address = 
-  (address > MEMORY_SIZE-1) || (address < 0) ? 1 : 0;
+  (input_address > MEMORY_SIZE-1) || (input_address < 0) ? 1 : 0;
 
 endmodule
