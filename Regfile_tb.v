@@ -23,7 +23,6 @@ rf_32 dut (
   .write_addr     (write_addr),
   .write_data     (write_data),
   .write_enabled  (write_enabled),
-  .finish         (finish), 
   .outA           (read_data_s), 
   .outB           (read_data_t)
 );
