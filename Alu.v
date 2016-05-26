@@ -123,6 +123,7 @@ begin // BEG main
         err_overflow <= OFF;
     end
 
+    // Set Less Than treats inputs as unsigned values
     CONTROL_SLT: begin
       err_invalid_control <= OFF;
       err_overflow <= OFF;
