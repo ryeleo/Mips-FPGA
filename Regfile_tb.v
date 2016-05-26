@@ -89,6 +89,19 @@ begin // BEG test
     assert_equal(read_data_t, 32'bx);
   end
 
+  // Testing writing and reading to 0 in same cycle
+  $display("==========\nWrite and read to 0 in same cycle\n");
+  reset();
+  write_enabled=1'b1; 
+  read_enabled=1'b1; 
+  write_addr=5'd0; 
+  write_data=32'hDEADBEEF;
+  read_addr_s=5'd0; 
+  read_addr_t=5'd0; 
+  #10;
+  assert_equal(read_data_s, 32'b0);
+  assert_equal(read_data_s, 32'b0);
+
   /// Testing Write
   $display("==========\nWrite Some Data to Register File\n");
   reset();
