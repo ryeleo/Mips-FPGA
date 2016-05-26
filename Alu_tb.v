@@ -29,14 +29,21 @@ alu_32 dut(
   .err_invalid_control    (err_invalid_control)
 );
 
+
+task reset();
+begin
+  input_a = 0;
+  input_b = 0;
+  control = 0;
+end
+endtask
+
 initial
 begin // BEG Test stimulus
-  #20;
-  //////////////////////////////////////////////////////////// 
-  /// Testing AND
-  //////////////////////////////////////////////////////////// 
   $display("==========\nTesting AND operator\n");
+  reset();
   control = dut.CONTROL_AND;
+
   input_a=32'b01;       
   input_b=32'b01; 
   #10;
@@ -68,31 +75,31 @@ begin // BEG Test stimulus
   input_b=32'hFFFFFFFF; 
   #10;
 
-  //////////////////////////////////////////////////////////// 
-  /// Testing OR
-  //////////////////////////////////////////////////////////// 
+
   $display("==========\nTesting OR operator\n");
+  reset();
   control = dut.CONTROL_OR; 
+
   input_a=32'b01;       input_b=32'b01; #10;
   input_a=32'b10;       input_b=32'b01; #10;
   input_a=32'hFFFFFFFF; input_b=32'h0000000F; #10;
   input_a=32'h0000000F; input_b=32'hFFFFFFFF; #10;
 
-  //////////////////////////////////////////////////////////// 
-  /// Testing NOR
-  //////////////////////////////////////////////////////////// 
+
   $display("==========\nTesting NOR operator\n");
+  reset();
   control = dut.CONTROL_NOR; 
+
   input_a=32'b01;       input_b=32'b01; #10;
   input_a=32'b10;       input_b=32'b01; #10;
   input_a=32'hFFFFFFFF; input_b=32'h0000000F; #10;
   input_a=32'h0000000F; input_b=32'hFFFFFFFF; #10;
 
-  //////////////////////////////////////////////////////////// 
-  /// Testing ADD
-  //////////////////////////////////////////////////////////// 
+
   $display("==========\nTesting ADDU (unsigned) operator\n");
+  reset();
   control = dut.CONTROL_ADD_UNSIGNED; 
+
   input_a=32'd1;        input_b=32'd1; #10;
   input_a=32'd3;        input_b=32'd1; #10;
   input_a=32'd100;      input_b=32'd300; #10;
@@ -103,8 +110,11 @@ begin // BEG Test stimulus
   input_a=32'h1;        input_b=32'hFFFFFFFF; #10;
   input_a=32'hFFFFFFFF; input_b=32'hFFFFFFFF; #10;
 
+
   $display("==========\nTesting ADD (signed) operator\n");
+  reset();
   control = dut.CONTROL_ADD; 
+
   input_a=-32'd1;       input_b=32'd1; #10;
   $display("========== OVERFLOW CONDITIONS ==========");
   input_a=32'h7FFFFFFF; input_b=32'h1; #10;         // overflow (max pos + 1)
@@ -112,11 +122,11 @@ begin // BEG Test stimulus
   input_a={1'b1,WORD_SIZE-1'b0}; input_b={1'b1,WORD_SIZE-1'b0}; #10;  // overflow (max neg)
   input_a=32'h7FFFFFFF; input_b=32'h7FFFFFFF; #10;  // overflow (max pos)
 
-  //////////////////////////////////////////////////////////// 
-  /// Testing SUB
-  //////////////////////////////////////////////////////////// 
+
   $display("==========\nTesting SUB (signed) operator\n");
+  reset();
   control = dut.CONTROL_SUB; 
+
   input_a=32'd1;        input_b=32'd1; #10;
   input_a=32'd3;        input_b=32'd1; #10;
   input_a=32'd100;      input_b=32'd101; #10;
@@ -131,11 +141,11 @@ begin // BEG Test stimulus
   input_a={1'b1,WORD_SIZE-1'b0}; input_b=32'h7FFFFFFF; #10;//(max neg)
   input_a=32'h7FFFFFFF; input_b={1'b1,WORD_SIZE-1'b0}; #10;//(max pos)
 
-  //////////////////////////////////////////////////////////// 
-  /// Testing SLT
-  //////////////////////////////////////////////////////////// 
+
   $display("==========\nTesting SLT operator\n");
+  reset();
   control = dut.CONTROL_SLT; 
+
   input_a=32'd1;          input_b=32'd1; #10;
   input_a=32'd1;          input_b=32'd2; #10;
   input_a=32'hFFFFFFFF;   input_b=32'hFFFFFFFE; #10;
@@ -144,13 +154,11 @@ begin // BEG Test stimulus
   input_a=32'h00000000;   input_b=32'hFFFFFFFF; #10;
   input_a=32'hFFFFFFFF;   input_b=32'h00000000; #10;
 
-  //////////////////////////////////////////////////////////// 
-  /// Testing Invalid Operator
-  //////////////////////////////////////////////////////////// 
   $display("==========\nTesting Invalid operator\n");
+  reset();
   control = 4'hf; 
-  input_a=32'd1;          input_b=32'd1; #10;
-  $stop;
+  #10;
+
 end // END Test stimulus
 
 // Little helper that makes our string output prettier
