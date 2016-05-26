@@ -63,6 +63,20 @@ task reset();
   end
 endtask
 
+// Clock Generator (#10 period)
+initial 
+begin
+  clock = 1; 
+  #5;
+  forever
+  begin
+    clock = ~clock; 
+    #5;
+  end
+end
+
+
+
 /**********************************************************
 *
 * Test Stimulus
