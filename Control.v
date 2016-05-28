@@ -1,3 +1,6 @@
+// 2016 Rui Tu
+//  control Module
+// combinational logic
 /* information from http://www.cs.columbia.edu/~martha/courses/3827/sp11/slides/9_singleCycleMIPS.pdf 
 	http://www.eng.ucy.ac.cy/mmichael/courses/ECE314/LabsNotes/02/MIPS_Instruction_Coding_With_Hex.pdf
 */
