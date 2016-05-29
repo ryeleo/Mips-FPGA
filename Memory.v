@@ -33,7 +33,7 @@ output reg                  err_invalid_address;
 reg [WORD_SIZE:0]  data[MEMORY_SIZE:0];
 
 // Begin computing on positive edge
-always @ (posedge clock) 
+always @ (negedge clock) 
 begin
   err_invalid_address <= (input_address > MEMORY_SIZE-1) || (input_address < 0) ? ON : OFF;
 
