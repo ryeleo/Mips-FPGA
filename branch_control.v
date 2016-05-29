@@ -2,7 +2,7 @@
 module branch_control(
   branch_op,
   zero,
-  branch_sig
+  do_branch
 );
 
   input wire [1:0] branch_op;
