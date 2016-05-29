@@ -27,7 +27,7 @@ module control_32(
 			    bne 	    = 6'b0001_01,
 			    addi	    = 6'b0010_00,
 			    j    	    = 6'b0000_10,
-			    jr    	  = 6'b0010_00,
+			    jr    	  = 6'b0000_00,
 			    jal    	  = 6'b0000_11,
 
 			    on  	    = 1'b1,
@@ -156,20 +156,6 @@ module control_32(
 				err_illegal_opcode <= off;
 			end
 
-			jr: begin
-				mem_toreg          <= memtoreg_invalid;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= branch_off;
-				alu_src            <= off;
-				reg_dst            <= regdst_jal;
-				reg_write          <= off;
-				jump 	             <= jumpmux_jr;
-
-				alu_op             <= aluop_invalid;
-				err_illegal_opcode <= off;
-			end
-
 			jal: begin
 				mem_toreg          <= memtoreg_pc;
 				mem_write          <= off;
@@ -183,6 +169,22 @@ module control_32(
 				alu_op             <= aluop_invalid;
 				err_illegal_opcode <= off;
 			end
+
+			jr: begin
+        $display("in JR control generating");
+				mem_toreg          <= memtoreg_invalid;
+				mem_write          <= off;
+				mem_read           <= off;
+				branch             <= branch_off;
+				alu_src            <= off;
+				reg_dst            <= regdst_jal;
+				reg_write          <= off;
+				jump 	             <= jumpmux_jr;
+
+				alu_op             <= aluop_invalid;
+				err_illegal_opcode <= off;
+			end
+
 
 			j: begin
 				mem_toreg          <= memtoreg_invalid;
