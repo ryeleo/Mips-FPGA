@@ -1,11 +1,16 @@
+// 2016 Rui Tu
+// PC Control Module
+//
+// PC Control should happen after ALU, so should be done in the Memory cycle
+// or the Writeback cycle.
+
 module pc_control_32(
-	input 		            clk,			        // clock
+	input 		              clk,			        // clock
 	input                   reset,		            // reset bit
 	input wire              beq,	     	        // branch and zero
 	input wire	            jump,			        // if jump then 1
 	input wire [31:0]       branch_offset,	        // from branch_offset 
 	input wire [25:0]       jump_addr,		        // instruction [25:0]
-
 	output reg [31:0]       pc			            // pc out
 );
 
@@ -14,36 +19,29 @@ module pc_control_32(
 	reg  [31:0]             pc_reg;
 	reg  [31:0]             temp_pc_reg;
 
-	assign extend_jump_address [25:0] = jump_addr;
+  // Extended jump addr = jump address * 4
+	assign extend_jump_address = (jump_addr << 2);
 
 	always @(posedge clk) begin
 
 		if ( reset ) begin
-
 			pc_reg      <= 0;
-		
 			temp_pc_reg <= 0;
-		
 		end else begin
 	
 			temp_pc_reg = pc_reg + 4;
 
-			if ( jump == 1 ) begin
-				$display("jump ================================================== ");
+      // Jump takes priority over branching
+			if ( jump == 1 )
+        // Take 4 MSB from PC+4, take the 28 least significant bits from 
+				pc_reg = {temp_pc_reg[31:28], extend_jump_address};
 
-				pc_reg[27 :0]  <= ( extend_jump_address << 2 );
-
-				pc_reg[31:28]  <=   temp_pc_reg[31:28]; 	
-
-			end else if ( beq == 1 ) begin
-				$display("beq ================================================== ");
+			else if ( beq == 1 )
 				pc_reg = temp_pc_reg + ( branch_offset << 2 );
-			
-			end else begin
-			
+
+			else
 				pc_reg = temp_pc_reg;
-			
-			end
+
 		end
 		
 		pc = pc_reg;
