@@ -91,7 +91,7 @@ rf_32 regfile (
 wire [31:0] sext_alusrcmux_b;
 sign_extend_32 sign_ext(
   .input_16(dec_immediate),
-  .output_32(sext_alusrcmux_b)
+  .result_32(sext_alusrcmux_b)
 );
 
 wire [31:0] alusrcmux_alu_b;
