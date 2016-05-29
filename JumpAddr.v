@@ -1,12 +1,11 @@
 // 2016 Ryan Leonard
-// ALU Module
-//
+// jump_addr Module
 //
 
-module (
+module jump_addr (
   jump_relative_addr,
   pc_upper,
-  jump_address
+  jump_addr
 );
 
 input wire [25:0] jump_relative_addr;
@@ -15,7 +14,8 @@ output reg [31:0] jump_addr;
 
 always @(*)
 begin
-  jump_addr <= {pc_upper, jump_relative_addr << 2};
+  jump_addr[27:0] <= jump_relative_addr << 2;
+  jump_addr[31:28] <= pc_upper;
 end
 
 endmodule
