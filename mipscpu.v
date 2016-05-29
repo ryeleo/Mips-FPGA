@@ -58,6 +58,7 @@ control_32 control (
     .err_illegal_opcode()
 );
 
+wire [4:0]  rfwritemux_rf_writeaddr;
 wire [4:0] rfwritemux_c;
 assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
 mux3 rfwrite_mux (
@@ -69,16 +70,24 @@ mux3 rfwrite_mux (
 );
 
 
+wire [31:0] wbmux_rf_data;
+wire [31:0] rf_alu_a;
+wire [31:0] rf_alusrcmux_a;
+wire [31:0] rf_mem_data;
+assign rf_mem_data = rf_alusrcmux_a;
 rf_32 regfile (
   .clock(clock),
-  .read_addr_s(),
-  .read_addr_t(),
-  .write_addr(),
-  .write_data(),
-  .write(enabled),
-  .outA(),
-  .outB()
+  .read_addr_s(dec_rf_readaddrs),
+  .read_addr_t(dec_rf_readaddrt),
+  .write_addr(rfwritemux_rf_writeaddr),
+  .write_data(wbmux_rf_data),
+  .write(control_regwrite),
+  .outA(rf_alu_a),
+  .outB(rf_alusrcmux_a)
 );
+
+
+
 
 alu_32 alu (
   .input_a(),
