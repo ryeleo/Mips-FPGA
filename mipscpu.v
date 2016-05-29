@@ -136,5 +136,13 @@ memory data_memory (
   .err_invalid_address()
 );
 
+mux3 wb_mux(
+  .input_a(alu_wbmux_a),
+  .input_b(mem_wbmux_b),
+  .input_c(),
+  .choose(control_wbmux),
+  .result(wbmux_rf_data)
+);
+
 
 endmodule
