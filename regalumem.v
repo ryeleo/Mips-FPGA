@@ -12,6 +12,38 @@ module regalumem(
   mem_write_data,
 );
 
+rf_32 regfile (
+  .clock(),
+  .read_addr_s(),
+  .read_addr_t(),
+  .write_addr(),
+  .write_data(),
+  .write(enabled(),
+  .outA(),
+  .outB()
+);
+
+alu_32 alu (
+  .input_a(),
+  .input_b(),
+  .control(),
+  .result(),
+  .zero(),
+  .cout(),
+  .err_overflow(),
+  .err_invalid_control()
+);
+
+memory data_memory (
+  .clock(),
+  .input_address(),
+  .input_data(),
+  .read_enabled(),
+  .write_enabled(),
+  .output_data(),
+  .err_invalid_address()
+);
+
 input wire clock;
 input wire [4:0] rd; 
 input wire [4:0] rs; 
