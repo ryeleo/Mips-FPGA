@@ -54,8 +54,8 @@ module control_32(
         /* branch or no branch possible values
         * MSB is 'branch' bit
         * LSB is 'equal' bit -- 1 implies BEQ, 0 implies BNE */
-          branch_noteq  = 2'b10,
-          branch_equal  = 2'b11,
+          branch_noteq  = 2'b11,
+          branch_equal  = 2'b10,
           branch_off  = 2'b00,
 
 
