@@ -93,6 +93,14 @@ sign_extend_32 sign_ext(
   .output_32(sext_alusrcmux_b)
 );
 
+wire [31:0] alusrcmux_alu_b;
+mux2 alusrc_mux(
+  .input_a(rf_alusrcmux_a),
+  .input_b(sext_alusrcmux_b),
+  .choose(control_alusrcmux),
+  .result(alusrcmux_alu_b)
+);
+
 alu_32 alu (
   .input_a(),
   .input_b(),
