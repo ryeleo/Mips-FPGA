@@ -28,7 +28,7 @@ module decoder_32(
   rt,
   rd,
   shamt,
-  alu_function,
+  funct,
   immediate,
   jump_target
 );
@@ -39,7 +39,7 @@ output wire [4:0] rs;
 output wire [4:0] rt;
 output wire [4:0] rd;
 output wire [4:0] shamt;
-output wire [5:0] alu_function;
+output wire [5:0] funct;
 output wire [15:0] immediate;
 output wire [25:0] jump_target;
 
@@ -48,7 +48,7 @@ assign rs           = instruction[25:21];
 assign rt           = instruction[20:16];
 assign rd           = instruction[15:11];
 assign shamt        = instruction[10:06];
-assign alu_function = instruction[05:00];
+assign funct        = instruction[05:00];
 assign immediate    = instruction[15:00];
 assign jump_target  = instruction[25:00];
 
