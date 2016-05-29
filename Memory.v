@@ -3,6 +3,7 @@
 //
 // Read/write happenning at same time is unexpected behavior.
 //
+// Read enabled is no longer used
 module memory ( 
   clock,
   write_enabled,
@@ -25,7 +26,7 @@ input wire 	                write_enabled;
 input wire 	                read_enabled;
 input wire [WORD_SIZE-1:0]	input_address;
 input wire [WORD_SIZE-1:0]	input_data;
-output reg [WORD_SIZE-1:0]	output_data;
+output wire [WORD_SIZE-1:0]	output_data;
 output reg                  err_invalid_address;
 
 // A data structure 
@@ -35,11 +36,11 @@ reg [WORD_SIZE:0]  data[MEMORY_SIZE:0];
 always @ (posedge clock) 
 begin
   err_invalid_address <= (input_address > MEMORY_SIZE-1) || (input_address < 0) ? ON : OFF;
-  if (read_enabled)
-    output_data <= data[input_address];
 
   if (write_enabled) 
     data[input_address] <= input_data;
 end
+  
+assign output_data = data[input_address];
 
 endmodule
