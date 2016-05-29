@@ -18,7 +18,7 @@ module alu_control_32 (
 
 			    mem_aluop      = 2'b00,
 			    beq_aluop	   = 2'b01,
-			    artih_aluop    = 2'b10,
+			    arith_aluop    = 2'b10,
 			    default_aluop  = 2'b00,
 
 			    add_op         = 4'b0010,
@@ -73,7 +73,7 @@ module alu_control_32 (
 			  	alu_control <= sub_op;
 				err_illegal_alu_op <= 0;	
 			end
-			artih_aluop: begin
+			arith_aluop: begin
 				alu_control <= temp_op;
 				err_illegal_alu_op <= 0;
 			end
