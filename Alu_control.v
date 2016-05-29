@@ -14,6 +14,7 @@ module alu_control_32 (
 			    or_func         = 6'b10_0101,
 			    and_func        = 6'b10_0100,
 			    slt_func        = 6'b101_010,
+          // This function code is also hardcoded in Control module
 			    jr_func         = 6'b001_000,
 
 			    mem_aluop      = 2'b00,

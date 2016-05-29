@@ -6,29 +6,34 @@
 */
 module control_32(
 	input  wire [5:0] opcode,
+	input  wire [5:0] funct,
 
 	output reg 	[1:0] alu_op,
 	output reg  [1:0] mem_toreg,
-	output reg 		  mem_write,
-	output reg 		  mem_read,
+	output reg 		    mem_write,
+	output reg 		    mem_read,
 	output reg  [1:0] branch,
-	output reg 		  alu_src,
+	output reg 		    alu_src,
 	output reg 	[1:0] reg_dst,
-	output reg 		  reg_write,
+	output reg 		    reg_write,
 	output reg 	[1:0]	jump,
 
 	output reg        err_illegal_opcode
 );
 			    /* possible opcodes */
-	parameter   r_type      = 6'b0000_00,
+	parameter   
+          r_type      = 6'b0000_00,
 			    lw		    = 6'b1000_11,
 			    sw 		    = 6'b1010_11,
 			    beq 	    = 6'b0001_00,
 			    bne 	    = 6'b0001_01,
 			    addi	    = 6'b0010_00,
 			    j    	    = 6'b0000_10,
-			    jr    	  = 6'b0000_00,
 			    jal    	  = 6'b0000_11,
+
+
+          // This function code is copied from alu_control
+			    jr_func         = 6'b001_000,
 
 			    on  	    = 1'b1,
 			    off 	    = 1'b0,
@@ -77,7 +82,7 @@ module control_32(
 				alu_src            <= off;
 				reg_dst            <= regdst_r;
 				reg_write          <= on;
-				jump               <= jumpmux_nojump;
+				jump               <= (funct == jr_func) ? jumpmux_jr : jumpmux_nojump;
 
 				alu_op             <= artih_alu;
 				err_illegal_opcode <= off;
@@ -169,22 +174,6 @@ module control_32(
 				alu_op             <= aluop_invalid;
 				err_illegal_opcode <= off;
 			end
-
-			jr: begin
-        $display("in JR control generating");
-				mem_toreg          <= memtoreg_invalid;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= branch_off;
-				alu_src            <= off;
-				reg_dst            <= regdst_jal;
-				reg_write          <= off;
-				jump 	             <= jumpmux_jr;
-
-				alu_op             <= aluop_invalid;
-				err_illegal_opcode <= off;
-			end
-
 
 			j: begin
 				mem_toreg          <= memtoreg_invalid;

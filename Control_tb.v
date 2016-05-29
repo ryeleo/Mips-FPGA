@@ -1,6 +1,6 @@
 module control_test;
   reg   [5:0] opcode;
-  reg   [5:0] opcode;
+  reg   [5:0] funct;
 
   wire 	[1:0] alu_op;
   wire  [1:0] mem_toreg;
@@ -29,6 +29,7 @@ module control_test;
   );
  
   initial begin
+    funct <= 0;
     $dumpfile("control_test.vcd");
     $dumpvars(0, control_test);
 
@@ -52,7 +53,7 @@ module control_test;
     opcode = dut.jal; 
     #5;// jal
     $display("JR");
-    opcode = dut.jr; 
+    opcode = dut.r_type; funct = dut.jr_func;
     #5;// jr
 
     $display("\nError codes\n\n");
