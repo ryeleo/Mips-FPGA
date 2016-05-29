@@ -41,9 +41,9 @@ module control_32(
 			    regdst_invalid  = 2'b11,
 
         /* memtoreg mux3 possible values -- taken from same url as reg_dst */
-          memtoreg_r      = 2'b00,
-          memtoreg_jal    = 2'b10,
-          memtoreg_lw     = 2'b01,
+          memtoreg_alu      = 2'b00,
+          memtoreg_pc    = 2'b10,
+          memtoreg_mem     = 2'b01,
           memtoreg_invalid = 2'b11,
 
         /* branch or no branch possible values
@@ -70,7 +70,7 @@ module control_32(
 		case (opcode)
 			
 			r_type: begin
-				mem_toreg          <= memtoreg_r;
+				mem_toreg          <= memtoreg_alu;
 				mem_write          <= off;
 				mem_read           <= off;
 				branch             <= branch_off;
@@ -85,7 +85,7 @@ module control_32(
 			end
 
 			lw: begin
-				mem_toreg          <= memtoreg_lw;
+				mem_toreg          <= memtoreg_mem;
 				mem_write          <= off;
 				mem_read           <= on;
 				branch             <= branch_off;
@@ -143,7 +143,7 @@ module control_32(
 			end
 
 			addi: begin
-				mem_toreg          <= memtoreg_invalid;
+				mem_toreg          <= memtoreg_alu;
 				mem_write          <= off;
 				mem_read           <= off;
 				branch             <= branch_off;
@@ -157,13 +157,13 @@ module control_32(
 			end
 
 			jr: begin
-				mem_toreg          <= memtoreg_jal;
+				mem_toreg          <= memtoreg_invalid;
 				mem_write          <= off;
 				mem_read           <= off;
 				branch             <= branch_off;
 				alu_src            <= off;
 				reg_dst            <= regdst_jal;
-				reg_write          <= on;
+				reg_write          <= off;
 				jump 	             <= jumpmux_jr;
 
 				alu_op             <= aluop_invalid;
@@ -171,7 +171,7 @@ module control_32(
 			end
 
 			jal: begin
-				mem_toreg          <= memtoreg_jal;
+				mem_toreg          <= memtoreg_pc;
 				mem_write          <= off;
 				mem_read           <= off;
 				branch             <= branch_off;
