@@ -61,7 +61,7 @@ control_32 control (
 wire [4:0]  rfwritemux_rf_writeaddr;
 wire [4:0] rfwritemux_c;
 assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
-mux3 rfwrite_mux (
+mux3 #(.width(5)) rfwrite_mux (
   .input_a(dec_rfwritemux_a),
   .input_b(dec_rfwritemux_b),
   .input_c(rfwritemux_c),
@@ -104,7 +104,7 @@ mux2 alusrc_mux(
 
 wire [3:0] alucontrol_control;
 alu_control_32 alu_control(
-  .func(dec_funt),
+  .func(dec_funct),
   .alu_op(control_aluopraw),
   .alu_control(alucontrol_control),
   .err_illegal_alu_op(),
