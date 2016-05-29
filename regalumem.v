@@ -12,8 +12,18 @@ module regalumem(
   mem_write_data,
 );
 
+input wire clock;
+input wire [4:0] rd; 
+input wire [4:0] rs; 
+input wire [4:0] rt;
+input wire [15:0] immediate;
+input wire [1:0] alu_control;
+output reg [31:0] mem_read_data;
+output reg [31:0] mem_write_data;
+
+// Both regfile and memory can be driven by the same clock since 
 rf_32 regfile (
-  .clock(),
+  .clock(clock),
   .read_addr_s(),
   .read_addr_t(),
   .write_addr(),
@@ -35,7 +45,7 @@ alu_32 alu (
 );
 
 memory data_memory (
-  .clock(),
+  .clock(clock),
   .input_address(),
   .input_data(),
   .read_enabled(),
@@ -44,13 +54,9 @@ memory data_memory (
   .err_invalid_address()
 );
 
-input wire clock;
-input wire [4:0] rd; 
-input wire [4:0] rs; 
-input wire [4:0] rt;
-input wire [15:0] immediate;
-input wire [1:0] alu_control;
-output reg [31:0] mem_read_data;
-output reg [31:0] mem_write_data;
+sign_extend_32 sign_ext(
+  .input_16(),
+  .output_32()
+);
 
 endmodule
