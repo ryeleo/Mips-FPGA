@@ -37,6 +37,41 @@ decoder_32 decode(
 wire [4:0] rfwritemux_c;
 assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
 
+mux3 rfwrite_mux (
+  .input_a(dec_rfwritemux_a),
+  .input_b(dec_rfwritemux_b),
+  .input_c(rfwritemux_c),
+  .choose(control_rfwritemux);
+  .result(rfwritemux_rf_writeaddr);
+);
+
+wire [1:0] control_aluopraw;
+wire [1:0] control_wbmux;
+wire       control_memwrite;
+wire       control_memread;
+//  wire [] branch
+wire       control_alusrcmux;
+wire [1:0] control_rfwritemux;
+wire       control_regwrite;
+// wire [] jump;
+// wire       err_illegal_opcode;
+ 
+control_32 control (
+    .opcode(dec_opcode),
+    .funct(dec_funct),
+    .alu_op(control_aluopraw),
+    .mem_toreg(control_wbmux),
+    .mem_write(control_memwrite),
+    .mem_read(control_memread),
+    .branch(),
+    .alu_src(control_alusrcmux),
+    .reg_dst(control_rfwritemux),
+    .reg_write(control_regwrite),
+    .jump(),
+    .err_illegal_opcode()
+  )
+
+
 rf_32 regfile (
   .clock(clock),
   .read_addr_s(),
