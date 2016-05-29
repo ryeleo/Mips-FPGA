@@ -69,7 +69,6 @@ mux3 #(.width(5)) rfwrite_mux (
   .result(rfwritemux_rf_writeaddr)
 );
 
-
 wire [31:0] wbmux_rf_data;
 wire [31:0] rf_alu_a;
 wire [31:0] rf_alusrcmux_a;
@@ -126,13 +125,14 @@ alu_32 alu (
   .err_invalid_control()
 );
 
+wire [31:0] mem_wbmux_b;
 memory data_memory (
   .clock(clock),
-  .input_address(),
-  .input_data(),
-  .read_enabled(),
-  .write_enabled(),
-  .output_data(),
+  .input_address(alu_mem_addr),
+  .input_data(rf_mem_data),
+  .read_enabled(control_memread),
+  .write_enabled(control_memwrite),
+  .output_data(mem_wbmux_b),
   .err_invalid_address()
 );
 
