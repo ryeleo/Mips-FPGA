@@ -87,7 +87,11 @@ rf_32 regfile (
 );
 
 
-
+wire [31:0] sext_alusrcmux_b;
+sign_extend_32 sign_ext(
+  .input_16(dec_immediate),
+  .output_32(sext_alusrcmux_b)
+);
 
 alu_32 alu (
   .input_a(),
@@ -110,9 +114,5 @@ memory data_memory (
   .err_invalid_address()
 );
 
-sign_extend_32 sign_ext(
-  .input_16(),
-  .output_32()
-);
 
 endmodule
