@@ -11,9 +11,10 @@ module alu_control_32 (
 
 	parameter   add_func       = 6'b10_0000,
     		    sub_func       = 6'b10_0010,
-			    or_func        = 6'b10_0101,
-			    and_func       = 6'b10_0100,
-			    slt_func       = 6'b101_010,
+			    or_func         = 6'b10_0101,
+			    and_func        = 6'b10_0100,
+			    slt_func        = 6'b101_010,
+			    jr_func         = 6'b001_000,
 
 			    mem_aluop      = 2'b00,
 			    beq_aluop	   = 2'b01,
@@ -48,6 +49,12 @@ module alu_control_32 (
 			end
 			slt_func: begin
 				temp_op               <= slt_op;
+				err_illegal_func_code <= 0;
+			end
+			jr_func: begin
+        // JR we don't care what the ALU does, so we use 'and_op' because it
+        // is cheaper.
+				temp_op               <= and_op;
 				err_illegal_func_code <= 0;
 			end
 			default: begin
