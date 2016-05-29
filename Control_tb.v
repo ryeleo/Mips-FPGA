@@ -5,7 +5,7 @@ module control_test;
   wire  [1:0] mem_toreg;
   wire 				mem_write;
   wire 				mem_read;
-  wire 				branch;
+  wire 	[1:0]	branch;
   wire 				alu_src;
   wire 	[1:0] reg_dst;
   wire 				reg_write;
@@ -26,7 +26,7 @@ module control_test;
     .err_illegal_opcode(error)
   );
  
-  wire [10:0] result = {reg_write, reg_dst, alu_src, branch, mem_write, mem_read, mem_toreg, jump};
+  wire [11:0] result = {reg_write, reg_dst, alu_src, branch, mem_write, mem_read, mem_toreg, jump};
 
   initial begin
     $dumpfile("control_test.vcd");
@@ -38,6 +38,7 @@ module control_test;
     opcode <= dut.lw; #5;// lw
     opcode <= dut.sw; #5;// sw
     opcode <= dut.beq; #5;// beq 
+    opcode <= dut.bne; #5;// bne
     opcode <= dut.addi; #5;// addi  
     opcode <= dut.j; #5;// jump
     opcode <= dut.jal; #5;// jal

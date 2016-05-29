@@ -11,7 +11,7 @@ module control_32(
 	output reg  [1:0] mem_toreg,
 	output reg 		  mem_write,
 	output reg 		  mem_read,
-	output reg 		  branch,
+	output reg  [1:0] branch,
 	output reg 		  alu_src,
 	output reg 	[1:0] reg_dst,
 	output reg 		  reg_write,
@@ -24,6 +24,7 @@ module control_32(
 			    lw		    = 6'b1000_11,
 			    sw 		    = 6'b1010_11,
 			    beq 	    = 6'b0001_00,
+			    bne 	    = 6'b0001_01,
 			    addi	    = 6'b0010_00,
 			    j    	    = 6'b0000_10,
 			    jr    	  = 6'b0010_00,
@@ -45,6 +46,14 @@ module control_32(
           memtoreg_lw     = 2'b01,
           memtoreg_invalid = 2'b11,
 
+        /* branch or no branch possible values
+        * MSB is 'branch' bit
+        * LSB is 'equal' bit -- 1 implies BEQ, 0 implies BNE */
+          branch_noteq  = 2'b10,
+          branch_equal  = 2'b11,
+          branch_off  = 2'b00,
+
+
         /* jump mux3 possible values -- taken from same url as reg_dst */
           jumpmux_nojump  = 2'b00,
           jumpmux_j_jal   = 2'b01,
@@ -64,7 +73,7 @@ module control_32(
 				mem_toreg          <= memtoreg_r;
 				mem_write          <= off;
 				mem_read           <= off;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= off;
 				reg_dst            <= regdst_r;
 				reg_write          <= on;
@@ -79,7 +88,7 @@ module control_32(
 				mem_toreg          <= memtoreg_lw;
 				mem_write          <= off;
 				mem_read           <= on;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= on;
 				reg_dst            <= regdst_lw;
 				reg_write          <= on;
@@ -94,7 +103,7 @@ module control_32(
 				mem_toreg          <= memtoreg_invalid;
 				mem_write          <= on;
 				mem_read           <= off;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= on;
 				reg_dst            <= regdst_invalid;
 				reg_write          <= off;
@@ -105,11 +114,11 @@ module control_32(
 
 			end
 
-			beq: begin
+			bne: begin
 				mem_toreg          <= memtoreg_invalid;
 				mem_write          <= off;
 				mem_read           <= off;
-				branch             <= on;
+				branch             <= branch_noteq;
 				alu_src            <= off;
 				reg_dst            <= regdst_invalid;
 				reg_write          <= off;
@@ -117,14 +126,27 @@ module control_32(
 
 				alu_op             <= beq_alu;
 				err_illegal_opcode <= off;
+			end
 
+			beq: begin
+				mem_toreg          <= memtoreg_invalid;
+				mem_write          <= off;
+				mem_read           <= off;
+				branch             <= branch_equal;
+				alu_src            <= off;
+				reg_dst            <= regdst_invalid;
+				reg_write          <= off;
+				jump               <= jumpmux_nojump;
+
+				alu_op             <= beq_alu;
+				err_illegal_opcode <= off;
 			end
 
 			addi: begin
 				mem_toreg          <= memtoreg_invalid;
 				mem_write          <= off;
 				mem_read           <= off;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= on;
 				reg_dst            <= regdst_invalid;
 				reg_write          <= on;
@@ -138,7 +160,7 @@ module control_32(
 				mem_toreg          <= memtoreg_jal;
 				mem_write          <= off;
 				mem_read           <= off;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= off;
 				reg_dst            <= regdst_jal;
 				reg_write          <= on;
@@ -152,7 +174,7 @@ module control_32(
 				mem_toreg          <= memtoreg_jal;
 				mem_write          <= off;
 				mem_read           <= off;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= off;
 				reg_dst            <= regdst_jal;
 				reg_write          <= on;
@@ -166,7 +188,7 @@ module control_32(
 				mem_toreg          <= memtoreg_invalid;
 				mem_write          <= off;
 				mem_read           <= off;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= off;
 				reg_dst            <= regdst_invalid;
 				reg_write          <= off;
@@ -181,7 +203,7 @@ module control_32(
 				mem_toreg          <= memtoreg_invalid;
 				mem_write          <= off;
 				mem_read           <= off;
-				branch             <= off;
+				branch             <= branch_off;
 				alu_src            <= off;
 				reg_dst            <= regdst_invalid;
 				reg_write          <= off;
