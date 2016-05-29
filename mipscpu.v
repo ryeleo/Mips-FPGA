@@ -101,11 +101,16 @@ mux2 alusrc_mux(
   .result(alusrcmux_alu_b)
 );
 
+// Zero will be hooked up to branch control
+wire [31:0] alu_mem_addr;
+wire [31:0] alu_wbmux_a;
+assign alu_wbmux_a = alu_mem_addr;
 alu_32 alu (
-  .input_a(),
-  .input_b(),
-  .control(),
-  .result(),
+  .input_a(rf_alu_a),
+  .input_b(alusrcmux_alu_b),
+  // TODO
+  .control(alucontrol_control),
+  .result(alu_mem_addr),
   .zero(),
   .cout(),
   .err_overflow(),
