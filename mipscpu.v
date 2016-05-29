@@ -81,7 +81,8 @@ rf_32 regfile (
   .read_addr_t(dec_rf_readaddrt),
   .write_addr(rfwritemux_rf_writeaddr),
   .write_data(wbmux_rf_data),
-  .write(control_regwrite),
+  .write_enabled(control_regwrite),
+  .read_enabled(),
   .outA(rf_alu_a),
   .outB(rf_alusrcmux_a)
 );
