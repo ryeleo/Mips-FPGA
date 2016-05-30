@@ -2,13 +2,16 @@
 // 2016 Ryan Leonard & Rui Tu
 
 module cpu(
-  clock
+  clock,
+  reset
 );
+
 
 input wire clock;
 input wire reset;
 wire [31:0] imem_dec_instr;
 wire [31:0] pc_imem_addr;
+wire [31:0] jumpmux_pc;
 
 pc pc(
   .clock(clock),
