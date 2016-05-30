@@ -6,9 +6,17 @@ module cpu(
 );
 
 input wire clock;
-
+input wire reset;
 wire [31:0] imem_dec_instr;
 wire [31:0] pc_imem_addr;
+
+pc pc(
+  .clock(clock),
+  .reset(reset),
+  .pc_in(jumpmux_pc),
+  .pc_out(pc_imem_addr)
+);
+
 memory instruction_memory ( 
   .clock(clock),
   .write_enabled(),             // this will be wired up with a loader module
