@@ -21,13 +21,13 @@ parameter
   MEMORY_SIZE = 1024, 
   WORD_SIZE = 32; // 32 --> 32bit system, 64 --> 64bit system
 
-input wire                  clock;
-input wire 	                write_enabled;
-input wire 	                read_enabled;
-input wire [WORD_SIZE-1:0]	input_address;
-input wire [WORD_SIZE-1:0]	input_data;
-output wire [WORD_SIZE-1:0]	output_data;
-output reg                  err_invalid_address;
+input wire                    clock;
+input wire 	                  write_enabled;
+input wire 	                  read_enabled;
+input wire   [WORD_SIZE-1:0]	input_address;
+input wire   [WORD_SIZE-1:0]	input_data;
+output wire  [WORD_SIZE-1:0]	output_data;
+output reg                    err_invalid_address;
 
 // A data structure 
 reg [WORD_SIZE:0]  data[MEMORY_SIZE:0];

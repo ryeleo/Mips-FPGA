@@ -1,13 +1,24 @@
 
 // 2016 Ryan Leonard & Rui Tu
 
-module mips_cpu(
-  clock,
-  instruction
+module cpu(
+  clock
 );
 
 input wire clock;
-input wire [31:0] instruction;
+
+wire [31:0] imem_dec_instr;
+wire [31:0] pc_imem_addr;
+memory instruction_memory ( 
+  .clock(clock),
+  .write_enabled(),             // this will be wired up with a loader module
+  .read_enabled(),              // not now
+  .input_address(pc_imem_addr), // input data comes from pc
+  .input_data(),                // this will be wired up with a loader module
+  .output_data(imem_dec_instr), // the output is instructions
+  .err_invalid_address()       // we don't care
+);
+
 
 wire [5:0] dec_opcode;
 wire [5:0] dec_funct;
@@ -19,7 +30,7 @@ wire [15:0] dec_immediate;
 wire [25:0] dec_jumptarg;
 assign dec_rfwritemux_a = dec_rf_readaddrt;
 decoder_32 decode(
-  .instruction(instruction),
+  .instruction(imem_dec_instr),
   .opcode(dec_opcode),
   .rs(dec_rf_readaddrs),
   .rt(dec_rf_readaddrt),
@@ -140,6 +151,15 @@ mux3 wb_mux(
   .choose(control_wbmux),
   .result(wbmux_rf_data)
 );
+
+
+/* =============================================================================== */
+
+
+
+
+
+
 
 
 endmodule
