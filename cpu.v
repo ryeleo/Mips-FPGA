@@ -12,6 +12,12 @@ input wire reset;
 wire [31:0] imem_dec_instr;
 wire [31:0] pc_imem_addr;
 wire [31:0] jumpmux_pc;
+wire [31:0] pc_inc_four;
+wire [31:0] pc_pcincadder;
+wire [31:0] pcincadder_branchmux_a;
+assign pc_pcincadder = pc_imem_addr;
+
+
 
 pc pc(
   .clock(clock),
@@ -167,6 +173,12 @@ mux3 wb_mux(
 /* =============================================================================== */
 
 
+assign pc_inc_four = 4;
+adder pc_inc_adder(
+  .input_a(pc_pcincadder),
+  .input_b(pc_inc_four),
+  .result(pcincadder_branchmux_a)
+);
 
 
 
