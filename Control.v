@@ -40,9 +40,9 @@ module control_32(
 
         /* reg_dst mux3 possible values */
         // http://meseec.ce.rit.edu/eecc550-winter2005/550-chapter5-exercises.pdf
-			    regdst_r  	    = 2'b01,
+			    regdst_wb  	    = 2'b01,
 			    regdst_jal  	  = 2'b10,
-			    regdst_lw  	    = 2'b00,
+			    regdst_immtype  	    = 2'b00,
 			    regdst_invalid  = 2'b11,
 
         /* memtoreg mux3 possible values -- taken from same url as reg_dst */
@@ -80,7 +80,7 @@ module control_32(
 				mem_read           <= off;
 				branch             <= branch_off;
 				alu_src            <= off;
-				reg_dst            <= regdst_r;
+				reg_dst            <= regdst_wb;
 				reg_write          <= on;
 				jump               <= (funct == jr_func) ? jumpmux_jr : jumpmux_nojump;
 
@@ -95,7 +95,7 @@ module control_32(
 				mem_read           <= on;
 				branch             <= branch_off;
 				alu_src            <= on;
-				reg_dst            <= regdst_lw;
+				reg_dst            <= regdst_immtype;
 				reg_write          <= on;
 				jump               <= jumpmux_nojump;
 				
@@ -153,7 +153,7 @@ module control_32(
 				mem_read           <= off;
 				branch             <= branch_off;
 				alu_src            <= on;
-				reg_dst            <= regdst_invalid;
+				reg_dst            <= regdst_immtype;
 				reg_write          <= on;
 				jump               <= jumpmux_nojump;
 

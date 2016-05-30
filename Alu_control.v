@@ -16,7 +16,6 @@ module alu_control_32 (
 			    slt_func        = 6'b101_010,
           // This function code is also hardcoded in Control module
 			    jr_func         = 6'b001_000,
-
 			    mem_aluop      = 2'b00,
 			    beq_aluop	   = 2'b01,
 			    arith_aluop    = 2'b10,
@@ -32,7 +31,7 @@ module alu_control_32 (
 
 	always @(*) begin
 		case(func)	
-			add_func: begin
+      add_func: begin
 				temp_op               <= add_op;
 				err_illegal_func_code <= 0;
 			end
@@ -61,7 +60,7 @@ module alu_control_32 (
 			default: begin
 				temp_op               <= default_op;
 				err_illegal_func_code <= 1;
-				$display("unimplement function code: %b\n", func);
+				// $display("unimplement function code: %b\n", func);
 			end
 		endcase
 
@@ -81,7 +80,7 @@ module alu_control_32 (
 			default: begin   
 				alu_control <= default_op;
 				err_illegal_alu_op <= 1;
-				$display("unsupported ALUop: %b\n", alu_op);
+				// $display("unsupported ALUop: %b\n", alu_op);
 			end
 		endcase
 	end
