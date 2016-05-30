@@ -1,3 +1,4 @@
+// Rui Tu
 module pc_test;
 	reg reset;
 	reg clk;
