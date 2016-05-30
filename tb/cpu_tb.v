@@ -18,7 +18,7 @@ localparam
            t1 = 9,
            t2 = 10,
            addi_t0_zero_6   = 32'h20080006,
-					 addi_t1_zero_11  = 32'h2009000B,
+	   addi_t1_zero_11  = 32'h2009000B,
            addi_t0_t0_10    = 32'h2108000A,
            addi_t2_t1_240   = 32'h212A00F0,
            add_t2_t0_t1     = 32'h01095020,
