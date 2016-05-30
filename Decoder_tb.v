@@ -20,7 +20,7 @@ decoder_32 dut (
   .rt (rt),
   .rd (rd),
   .shamt (shamt),
-  .alu_function (alu_function),
+  .funct (alu_function),
   .immediate (immediate),
   .jump_target (jump_target)
 );

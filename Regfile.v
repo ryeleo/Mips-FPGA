@@ -37,27 +37,23 @@ input wire [INDEX_SIZE-1:0]  read_addr_t;
 input wire        write_enabled;
 input wire [INDEX_SIZE-1:0]  write_addr;
 input wire [REG_SIZE-1:0] write_data;
-output reg [REG_SIZE-1:0] outA;
-output reg [REG_SIZE-1:0] outB;
+output wire [REG_SIZE-1:0] outA;
+output wire [REG_SIZE-1:0] outB;
 
 // A 'memories' data structure representing:
 //    32 registeread_addr_s each 32 bits
 reg [REG_SIZE-1:0] register_file[REGFILE_SIZE-1:0];
 
-
-always @ (posedge clock)
-begin // BEG logic
-  if (read_enabled)
-  begin
-    // The Right Hand Side will resolve before it could be assigned in the
-    // write enabled block below.
-    outA <= register_file[read_addr_s];
-    outB <= register_file[read_addr_t];
-  end
+// write logic 
+always @ (negedge clock)
+begin
   if (write_enabled)
     register_file[write_addr] <= write_data;
-
   register_file[0] <= ZERO;
-end // END logic
+end
+
+// Read logic is combinational
+assign outA = register_file[read_addr_s];
+assign outB = register_file[read_addr_t];
 
 endmodule

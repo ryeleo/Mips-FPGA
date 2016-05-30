@@ -143,7 +143,7 @@ begin // BEG main
     default: begin
       err_invalid_control <= ON; 
       err_overflow <= OFF;
-      $display("cannot decode control signal %b: ", control);
+      // $display("cannot decode control signal %b: ", control);
     end
   endcase
 end // END main

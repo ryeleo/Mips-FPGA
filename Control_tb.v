@@ -1,5 +1,6 @@
 module control_test;
   reg   [5:0] opcode;
+  reg   [5:0] funct;
 
   wire 	[1:0] alu_op;
   wire  [1:0] mem_toreg;
@@ -14,6 +15,7 @@ module control_test;
 
   control_32 dut (
     .opcode(opcode),
+    .funct(funct),
     .alu_op(alu_op),
     .mem_toreg(mem_toreg),
     .mem_write(mem_write),
@@ -26,32 +28,33 @@ module control_test;
     .err_illegal_opcode(error)
   );
  
-  wire [11:0] result = {reg_write, reg_dst, alu_src, branch, mem_write, mem_read, mem_toreg, jump};
-
   initial begin
+    funct <= 0;
     $dumpfile("control_test.vcd");
     $dumpvars(0, control_test);
 
-    $display("Opcode, result, ALUop, mem_toreg, mem_read, branch, alu_src, reg_dst, reg_write, jump, error"); 
-    $monitor("%b,%b,%b,%d,%b,%b,%b,%d,%b,%d,%b", opcode, result, alu_op, mem_toreg, mem_read, branch, alu_src, reg_dst, reg_write, jump, error); 
+    $display("Opcode, ALUop, mem_toreg, mem_read, branch, alu_src, reg_dst, reg_write, jump, error"); 
+    $monitor("%b,%b,%d,%b,%b,%b,%d,%b,%d,%b", opcode, alu_op, mem_toreg, mem_read, branch, alu_src, reg_dst, reg_write, jump, error); 
     opcode <= 6'b0000_00; #5; // r_type 
 
     $display("LW");
-    opcode <= dut.lw; #5;// lw
+    opcode = dut.lw; #5;// lw
     $display("SW");
-    opcode <= dut.sw; #5;// sw
+    opcode = dut.sw; #5;// sw
     $display("BEQ");
-    opcode <= dut.beq; #5;// beq 
+    opcode = dut.beq; #5;// beq 
     $display("BNE");
-    opcode <= dut.bne; #5;// bne
+    opcode = dut.bne; #5;// bne
     $display("ADDI");
-    opcode <= dut.addi; #5;// addi  
+    opcode = dut.addi; #5;// addi  
     $display("J");
-    opcode <= dut.j; #5;// jump
+    opcode = dut.j; #5;// jump
     $display("JAL");
-    opcode <= dut.jal; #5;// jal
+    opcode = dut.jal; 
+    #5;// jal
     $display("JR");
-    opcode <= dut.jr; #5;// jr
+    opcode = dut.r_type; funct = dut.jr_func;
+    #5;// jr
 
     $display("\nError codes\n\n");
     opcode <= 6'b0011_10; #5;// r_type 

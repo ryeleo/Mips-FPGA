@@ -6,51 +6,56 @@
 */
 module control_32(
 	input  wire [5:0] opcode,
+	input  wire [5:0] funct,
 
 	output reg 	[1:0] alu_op,
 	output reg  [1:0] mem_toreg,
-	output reg 		  mem_write,
-	output reg 		  mem_read,
+	output reg 		    mem_write,
+	output reg 		    mem_read,
 	output reg  [1:0] branch,
-	output reg 		  alu_src,
+	output reg 		    alu_src,
 	output reg 	[1:0] reg_dst,
-	output reg 		  reg_write,
+	output reg 		    reg_write,
 	output reg 	[1:0]	jump,
 
 	output reg        err_illegal_opcode
 );
 			    /* possible opcodes */
-	parameter   r_type      = 6'b0000_00,
+	parameter   
+          r_type      = 6'b0000_00,
 			    lw		    = 6'b1000_11,
 			    sw 		    = 6'b1010_11,
 			    beq 	    = 6'b0001_00,
 			    bne 	    = 6'b0001_01,
 			    addi	    = 6'b0010_00,
 			    j    	    = 6'b0000_10,
-			    jr    	  = 6'b0010_00,
 			    jal    	  = 6'b0000_11,
+
+
+          // This function code is copied from alu_control
+			    jr_func         = 6'b001_000,
 
 			    on  	    = 1'b1,
 			    off 	    = 1'b0,
 
         /* reg_dst mux3 possible values */
         // http://meseec.ce.rit.edu/eecc550-winter2005/550-chapter5-exercises.pdf
-			    regdst_r  	    = 2'b01,
+			    regdst_wb  	    = 2'b01,
 			    regdst_jal  	  = 2'b10,
-			    regdst_lw  	    = 2'b00,
+			    regdst_immtype  	    = 2'b00,
 			    regdst_invalid  = 2'b11,
 
         /* memtoreg mux3 possible values -- taken from same url as reg_dst */
-          memtoreg_r      = 2'b00,
-          memtoreg_jal    = 2'b10,
-          memtoreg_lw     = 2'b01,
+          memtoreg_alu      = 2'b00,
+          memtoreg_pc    = 2'b10,
+          memtoreg_mem     = 2'b01,
           memtoreg_invalid = 2'b11,
 
         /* branch or no branch possible values
         * MSB is 'branch' bit
         * LSB is 'equal' bit -- 1 implies BEQ, 0 implies BNE */
-          branch_noteq  = 2'b10,
-          branch_equal  = 2'b11,
+          branch_noteq  = 2'b11,
+          branch_equal  = 2'b10,
           branch_off  = 2'b00,
 
 
@@ -70,14 +75,14 @@ module control_32(
 		case (opcode)
 			
 			r_type: begin
-				mem_toreg          <= memtoreg_r;
+				mem_toreg          <= memtoreg_alu;
 				mem_write          <= off;
 				mem_read           <= off;
 				branch             <= branch_off;
 				alu_src            <= off;
-				reg_dst            <= regdst_r;
+				reg_dst            <= regdst_wb;
 				reg_write          <= on;
-				jump               <= jumpmux_nojump;
+				jump               <= (funct == jr_func) ? jumpmux_jr : jumpmux_nojump;
 
 				alu_op             <= artih_alu;
 				err_illegal_opcode <= off;
@@ -85,12 +90,12 @@ module control_32(
 			end
 
 			lw: begin
-				mem_toreg          <= memtoreg_lw;
+				mem_toreg          <= memtoreg_mem;
 				mem_write          <= off;
 				mem_read           <= on;
 				branch             <= branch_off;
 				alu_src            <= on;
-				reg_dst            <= regdst_lw;
+				reg_dst            <= regdst_immtype;
 				reg_write          <= on;
 				jump               <= jumpmux_nojump;
 				
@@ -143,12 +148,12 @@ module control_32(
 			end
 
 			addi: begin
-				mem_toreg          <= memtoreg_invalid;
+				mem_toreg          <= memtoreg_alu;
 				mem_write          <= off;
 				mem_read           <= off;
 				branch             <= branch_off;
 				alu_src            <= on;
-				reg_dst            <= regdst_invalid;
+				reg_dst            <= regdst_immtype;
 				reg_write          <= on;
 				jump               <= jumpmux_nojump;
 
@@ -156,22 +161,8 @@ module control_32(
 				err_illegal_opcode <= off;
 			end
 
-			jr: begin
-				mem_toreg          <= memtoreg_jal;
-				mem_write          <= off;
-				mem_read           <= off;
-				branch             <= branch_off;
-				alu_src            <= off;
-				reg_dst            <= regdst_jal;
-				reg_write          <= on;
-				jump 	             <= jumpmux_jr;
-
-				alu_op             <= aluop_invalid;
-				err_illegal_opcode <= off;
-			end
-
 			jal: begin
-				mem_toreg          <= memtoreg_jal;
+				mem_toreg          <= memtoreg_pc;
 				mem_write          <= off;
 				mem_read           <= off;
 				branch             <= branch_off;
