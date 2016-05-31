@@ -1,23 +1,71 @@
 
-// 2016 Ryan Leonard & Rui Tu
+// 2016 Ryan Leonard & Rui Tu & Frank Arana
 
 module cpu(
   clock,
   reset
 );
-
-
 input wire clock;
 input wire reset;
+
+wire [31:0] mem_wbmux_b;
+wire [31:0] pcincadder_wbmux_pcp4;
+wire [31:0] sext_alusrcmux_b;
+wire [31:0] alusrcmux_alu_b;
+wire [3:0] alucontrol_control;
+// Zero will be hooked up to branch control
+wire [31:0] alu_mem_addr;
+wire [31:0] alu_wbmux_a;
+wire alu_branchcontrol_zero;
 wire [31:0] imem_dec_instr;
 wire [31:0] pc_imem_addr;
 wire [31:0] jumpmux_pc;
 wire [31:0] pc_inc_four;
 wire [31:0] pc_pcincadder;
 wire [31:0] pcincadder_branchmux_a;
+wire [31:0] pcincadder_branchadder;
+wire [31:0] sext_branchadder;
+wire [31:0] branchadder_branchmux_b;
+wire branchcontrol_branchmux;
+wire [31:0] branchmux_jumpmux_a;
+wire [3:0] pcincadder_jumpaddr;
+wire [31:0] ja_jumpmux_b;
+wire [4:0]  rfwritemux_rf_writeaddr;
+wire [4:0] rfwritemux_c;
+wire [31:0] wbmux_rf_data;
+wire [31:0] rf_alu_a;
+wire [31:0] rf_alusrcmux_a;
+wire [31:0] rf_mem_data;
+wire [31:0] rf_jumpmux_c;
+wire [5:0] dec_opcode;
+wire [5:0] dec_funct;
+wire [4:0] dec_rf_readaddrs;
+wire [4:0] dec_rf_readaddrt;
+wire [4:0] dec_rfwritemux_a;
+wire [4:0] dec_rfwritemux_b;
+wire [15:0] dec_immediate;
+wire [25:0] dec_jumptarg;
+wire [1:0] control_aluopraw;
+wire [1:0] control_wbmux;
+wire       control_memwrite;
+wire       control_memread;
+wire       control_alusrcmux;
+wire [1:0] control_rfwritemux;
+wire       control_regwrite;
+wire [1:0] control_jumpmux;
+wire [1:0] control_branch;
+
+assign dec_rfwritemux_a = dec_rf_readaddrt;
+assign rf_mem_data = rf_alusrcmux_a;
+assign rf_jumpmux_c = rf_alu_a;
+assign pcincadder_jumpaddr = pcincadder_branchmux_a[31:28];
+assign sext_branchadder = sext_alusrcmux_b << 2; //Left shift 2 bits before branch adder. From sext
+assign pcincadder_wbmux_pcp4 = pcincadder_branchmux_a;
+assign pc_inc_four = 4;
+assign alu_wbmux_a = alu_mem_addr;
 assign pc_pcincadder = pc_imem_addr;
-
-
+assign pcincadder_branchadder = pcincadder_branchmux_a;
+assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
 
 pc pc(
   .clock(clock),
@@ -36,16 +84,6 @@ memory instruction_memory (
   .err_invalid_address()       // we don't care
 );
 
-
-wire [5:0] dec_opcode;
-wire [5:0] dec_funct;
-wire [4:0] dec_rf_readaddrs;
-wire [4:0] dec_rf_readaddrt;
-wire [4:0] dec_rfwritemux_a;
-wire [4:0] dec_rfwritemux_b;
-wire [15:0] dec_immediate;
-wire [25:0] dec_jumptarg;
-assign dec_rfwritemux_a = dec_rf_readaddrt;
 decoder_32 decode(
   .instruction(imem_dec_instr),
   .opcode(dec_opcode),
@@ -58,18 +96,6 @@ decoder_32 decode(
   .jump_target(dec_jumptarg)
 );
 
-wire [1:0] control_aluopraw;
-wire [1:0] control_wbmux;
-wire       control_memwrite;
-wire       control_memread;
-//  wire [] branch
-wire       control_alusrcmux;
-wire [1:0] control_rfwritemux;
-wire       control_regwrite;
-wire [1:0] control_jumpmux;
-wire [1:0] control_branch;
-// wire [] jump;
-// wire       err_illegal_opcode;
 control_32 control (
     .opcode(dec_opcode),
     .funct(dec_funct),
@@ -85,9 +111,6 @@ control_32 control (
     .err_illegal_opcode()
 );
 
-wire [4:0]  rfwritemux_rf_writeaddr;
-wire [4:0] rfwritemux_c;
-assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
 mux3 #(.width(5)) rfwrite_mux (
   .input_a(dec_rfwritemux_a),
   .input_b(dec_rfwritemux_b),
@@ -96,13 +119,6 @@ mux3 #(.width(5)) rfwrite_mux (
   .result(rfwritemux_rf_writeaddr)
 );
 
-wire [31:0] wbmux_rf_data;
-wire [31:0] rf_alu_a;
-wire [31:0] rf_alusrcmux_a;
-wire [31:0] rf_mem_data;
-wire [31:0] rf_jumpmux_c;
-assign rf_mem_data = rf_alusrcmux_a;
-assign rf_jumpmux_c = rf_alu_a;
 rf_32 regfile (
   .clock(clock),
   .read_addr_s(dec_rf_readaddrs),
@@ -116,13 +132,11 @@ rf_32 regfile (
 );
 
 
-wire [31:0] sext_alusrcmux_b;
 sign_extend_32 sign_ext(
   .input_16(dec_immediate),
   .result_32(sext_alusrcmux_b)
 );
 
-wire [31:0] alusrcmux_alu_b;
 mux2 alusrc_mux(
   .input_a(rf_alusrcmux_a),
   .input_b(sext_alusrcmux_b),
@@ -130,7 +144,6 @@ mux2 alusrc_mux(
   .result(alusrcmux_alu_b)
 );
 
-wire [3:0] alucontrol_control;
 alu_control_32 alu_control(
   .func(dec_funct),
   .alu_op(control_aluopraw),
@@ -139,11 +152,6 @@ alu_control_32 alu_control(
   .err_illegal_func_code()
 );
 
-// Zero will be hooked up to branch control
-wire [31:0] alu_mem_addr;
-wire [31:0] alu_wbmux_a;
-wire alu_branchcontrol_zero;
-assign alu_wbmux_a = alu_mem_addr;
 alu_32 alu (
   .input_a(rf_alu_a),
   .input_b(alusrcmux_alu_b),
@@ -155,7 +163,6 @@ alu_32 alu (
   .err_invalid_control()
 );
 
-wire [31:0] mem_wbmux_b;
 memory data_memory (
   .clock(clock),
   .input_address(alu_mem_addr),
@@ -166,8 +173,6 @@ memory data_memory (
   .err_invalid_address()
 );
 
-wire [31:0] pcincadder_wbmux_pcp4;
-assign pcincadder_wbmux_pcp4 = pcincadder_branchmux_a;
 mux3 wb_mux(
   .input_a(alu_wbmux_a),
   .input_b(mem_wbmux_b),
@@ -176,41 +181,30 @@ mux3 wb_mux(
   .result(wbmux_rf_data)
 );
 
-assign pc_inc_four = 4;
 adder pc_inc_adder(
   .input_a(pc_pcincadder),
   .input_b(pc_inc_four),
   .result(pcincadder_branchmux_a)
 );
 
-wire [3:0] pcincadder_jumpaddr;
-wire [31:0] ja_jumpmux_b;
-assign pcincadder_jumpaddr = pcincadder_branchmux_a[31:28];
 jump_addr jumpaddr(
   .jump_relative_addr(dec_jumptarg),
   .pc_upper(pcincadder_jumpaddr),
   .jump_addr(ja_jumpmux_b)
 );
 
-wire [31:0] pcincadder_branchadder;
-wire [31:0] sext_branchadder;
-wire [31:0] branchadder_branchmux_b;
-assign sext_branchadder = sext_alusrcmux_b << 2; //Left shift 2 bits before branch adder. From sext
-assign pcincadder_branchadder = pcincadder_branchmux_a;
 adder branch_adder(
   .input_a(pcincadder_branchadder),
   .input_b(sext_branchadder),
   .result(branchadder_branchmux_b)
 );
 
-wire branchcontrol_branchmux;
 branch_control branch_control(
   .branch_op(control_branch),
   .zero(alu_branchcontrol_zero),
   .do_branch(branchcontrol_branchmux)
 );
 
-wire [31:0] branchmux_jumpmux_a;
 mux2 branch_mux(
   .input_a(pcincadder_branchmux_a),
   .input_b(branchadder_branchmux_b),
