@@ -67,6 +67,7 @@ wire       control_alusrcmux;
 wire [1:0] control_rfwritemux;
 wire       control_regwrite;
 wire [1:0] control_jumpmux;
+wire [1:0] control_branch;
 // wire [] jump;
 // wire       err_illegal_opcode;
 control_32 control (
@@ -76,7 +77,7 @@ control_32 control (
     .mem_toreg(control_wbmux),
     .mem_write(control_memwrite),
     .mem_read(control_memread),
-    .branch(),
+    .branch(control_branch),
     .alu_src(control_alusrcmux),
     .reg_dst(control_rfwritemux),
     .reg_write(control_regwrite),
@@ -141,13 +142,14 @@ alu_control_32 alu_control(
 // Zero will be hooked up to branch control
 wire [31:0] alu_mem_addr;
 wire [31:0] alu_wbmux_a;
+wire alu_branchcontrol_zero;
 assign alu_wbmux_a = alu_mem_addr;
 alu_32 alu (
   .input_a(rf_alu_a),
   .input_b(alusrcmux_alu_b),
   .control(alucontrol_control),
   .result(alu_mem_addr),
-  .zero(),
+  .zero(alu_branchcontrol_zero),
   .cout(),
   .err_overflow(),
   .err_invalid_control()
@@ -203,7 +205,11 @@ adder branch_adder(
 );
 
 wire branchcontrol_branchmux;
-// TODO: Branch control modules
+branch_control branch_control(
+  .branch_op(control_branch),
+  .zero(alu_branchcontrol_zero),
+  .do_branch(branchcontrol_branchmux)
+);
 
 wire [31:0] branchmux_jumpmux_a;
 mux2 branch_mux(
@@ -220,5 +226,6 @@ mux3 jump_mux(
   .choose(control_jumpmux),
   .result(jumpmux_pc)
 );
+
 
 endmodule
