@@ -199,4 +199,15 @@ adder branch_adder(
   .result(branchadder_branchmux_b)
 );
 
+wire branchcontrol_branchmux;
+// TODO: Branch control modules
+
+wire [31:0] branchmux_jumpmux_a;
+mux2 branch_mux(
+  .input_a(pcincadder_branchmux_a),
+  .input_b(branchadder_branchmux_b),
+  .choose(branchcontrol_branchmux),
+  .result(branchmux_jumpmux_a)
+);
+
 endmodule
