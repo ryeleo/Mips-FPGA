@@ -166,16 +166,15 @@ memory data_memory (
   .err_invalid_address()
 );
 
+wire [31:0] pcincadder_wbmux_pcp4;
+assign pcincadder_wbmux_pcp4 = pcincadder_branchmux_a;
 mux3 wb_mux(
   .input_a(alu_wbmux_a),
   .input_b(mem_wbmux_b),
-  .input_c(),
+  .input_c(pcincadder_wbmux_pcp4),
   .choose(control_wbmux),
   .result(wbmux_rf_data)
 );
-
-
-
 
 assign pc_inc_four = 4;
 adder pc_inc_adder(
@@ -226,6 +225,5 @@ mux3 jump_mux(
   .choose(control_jumpmux),
   .result(jumpmux_pc)
 );
-
 
 endmodule
