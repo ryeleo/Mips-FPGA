@@ -18,7 +18,7 @@ module pc(
   // we assume the output of the jumpmux will be
   // stable until the start of the posedge of the next
   // clock cycle
-	always@(negedge clock) begin
+	always@(posedge clock) begin
 		if (reset)
     begin
 			pc_reg = 32'h0;
