@@ -1,6 +1,5 @@
 // 2016 Ryan and Rui
 //
-// TODO: Binary input tests for mips cpu
 
 module mips_cpu_test;
 
