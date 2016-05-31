@@ -66,6 +66,7 @@ wire       control_memread;
 wire       control_alusrcmux;
 wire [1:0] control_rfwritemux;
 wire       control_regwrite;
+wire [1:0] control_jumpmux;
 // wire [] jump;
 // wire       err_illegal_opcode;
 control_32 control (
@@ -79,7 +80,7 @@ control_32 control (
     .alu_src(control_alusrcmux),
     .reg_dst(control_rfwritemux),
     .reg_write(control_regwrite),
-    .jump(),
+    .jump(control_jumpmux),
     .err_illegal_opcode()
 );
 
@@ -98,7 +99,9 @@ wire [31:0] wbmux_rf_data;
 wire [31:0] rf_alu_a;
 wire [31:0] rf_alusrcmux_a;
 wire [31:0] rf_mem_data;
+wire [31:0] rf_jumpmux_c;
 assign rf_mem_data = rf_alusrcmux_a;
+assign rf_jumpmux_c = rf_alu_a;
 rf_32 regfile (
   .clock(clock),
   .read_addr_s(dec_rf_readaddrs),
@@ -208,6 +211,14 @@ mux2 branch_mux(
   .input_b(branchadder_branchmux_b),
   .choose(branchcontrol_branchmux),
   .result(branchmux_jumpmux_a)
+);
+
+mux3 jump_mux(
+  .input_a(branchmux_jumpmux_a),
+  .input_b(ja_jumpmux_b),
+  .input_c(rf_jumpmux_c),
+  .choose(control_jumpmux),
+  .result(jumpmux_pc)
 );
 
 endmodule
