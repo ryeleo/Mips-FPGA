@@ -1,5 +1,4 @@
 // 2016 Ryan and Rui
-//
 
 module cpu_test;
 
@@ -37,51 +36,31 @@ localparam
             add_t1_t0_t1     = 32'h0109_4820,
             bne_t0_t1_skip2  = 32'h1509_0002, // jump forward 2
             addi_t0_t0_4095  = 32'h2108_0FFF,
-            addi_t1_t1_4095  = 32'h2129_0FFF;
+            addi_t1_t1_4095  = 32'h2129_0FFF,
 
-/*
-*
-  .asm
-  #
-  # Perform branches (beq, bne) which would create hazards
-  # and see if they are handled correctly.
-  #
+            // jump Testing
+            //
+            // 0: addi t0, 0, 255
+            // 4: j 36
+            // ...
+            // 36: addi t1, 0, 255
+            // 40: jal 80
+            // 44: addi t0, 0, 4095
+            // 48: j 88
+            // ...
+            // 80: add t2, t1, t0
+            // 84: jr $31
+            // 88: DONE
+            addi_t0_zero_255      = 32'h2008_00FF,
+            j_36                  = 32'h0800_0024,
+            addi_t1_zero_255      = 32'h2009_00FF,
+            jal_80                = 32'h0C00_0050,
+            addi_t0_zero_4095     = 32'h2008_0FFF,
+            j_88                  = 32'h0800_0058,
+            //add_t2_t0_t1     = 32'h01095020,
+            jr_ra                 = 32'h03E0_0008;
 
-  # initial values
-  addi $t0, $zero, 1
-  addi $t1, $zero, 2
 
-  # increment $t0 so it equals $t1
-  addi $t0, $t0, 1
-
-  beq $t0, $t1, skip1
-
-  # these shouldn't get added
-  #  If they do, the third hex digit will be 1
-  addi $t0, $t0, 256
-  addi $t1, $t1, 256
-
-  skip1:
-
-  add $t0, $t0, $t1  # 2 + 2 = 4
-  add $t1, $t0, $t1  # 4 + 2 = 6
-
-  bne $t0, $t1, skip2
-
-  # these shouldn't get added
-  #  If they do, the fourth hex digit will be 1
-  addi $t0, $t0, 4096
-  addi $t1, $t1, 4096
-
-  skip2:
-
-  # $t0 = 4, $t1 = 6
-
-  # so the values show up in the dump
-  add $t0, $zero, $t0
-  add $t1, $zero, $t1
-
-*/
 
 
 // Clock Generator (#10 period)
@@ -116,6 +95,7 @@ endtask
 
 // Test logic
 initial begin
+  /*
   $display("TEST SUITE 1: ");
   $display("Initializing instruction memory");
   load_instr(0, addi_t0_zero_6);
@@ -190,6 +170,30 @@ initial begin
   #200;
   assert_equal(dut.regfile.register_file[t0], 4);
   assert_equal(dut.regfile.register_file[t1], 6);
+
+  #100;
+*/
+
+  $display("Initializing instruction memory");
+  load_instr(0, addi_t0_zero_255 );
+  load_instr(4, j_36             );
+  load_instr(36, addi_t1_zero_255);
+  load_instr(40,jal_80           );
+  load_instr(44,addi_t0_zero_4095);
+  load_instr(48,j_88             );
+  load_instr(80,add_t2_t0_t1     );
+  load_instr(84,jr_ra            );
+
+  $display("Resetting the program counter to 0th instruction");
+  reset = 1;
+  #20
+
+  $display("Running instructions!");
+  reset = 0;
+  #200;
+  assert_equal(dut.regfile.register_file[t0], 4095);
+  assert_equal(dut.regfile.register_file[t1], 255);
+  assert_equal(dut.regfile.register_file[t2], 510);
 
 end
           /*
