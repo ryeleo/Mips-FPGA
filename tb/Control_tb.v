@@ -45,6 +45,8 @@ module control_test;
     opcode = dut.beq; #5;// beq 
     $display("BNE");
     opcode = dut.bne; #5;// bne
+    $display("R-type");
+    opcode = dut.r_type; #5;// r-type
     $display("ADDI");
     opcode = dut.addi; #5;// addi  
     $display("J");

@@ -1,4 +1,3 @@
-
 // 2016 Ryan Leonard & Rui Tu & Frank Arana
 
 module cpu(
@@ -20,7 +19,7 @@ wire alu_branchcontrol_zero;
 wire [31:0] imem_dec_instr;
 wire [31:0] pc_imem_addr;
 wire [31:0] jumpmux_pc;
-wire [31:0] pc_inc_four;
+wire [31:0] pc_inc_advance;
 wire [31:0] pc_pcincadder;
 wire [31:0] pcincadder_branchmux_a;
 wire [31:0] pcincadder_branchadder;
@@ -61,12 +60,17 @@ assign rf_jumpmux_c = rf_alu_a;
 assign pcincadder_jumpaddr = pcincadder_branchmux_a[31:28];
 assign sext_branchadder = sext_alusrcmux_b << 2; //Left shift 2 bits before branch adder. From sext
 assign pcincadder_wbmux_pcp4 = pcincadder_branchmux_a;
-assign pc_inc_four = 4;
+assign pc_inc_advance = 4;
 assign alu_wbmux_a = alu_mem_addr;
 assign pc_pcincadder = pc_imem_addr;
 assign pcincadder_branchadder = pcincadder_branchmux_a;
 assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
 
+// Our instruction memory is 32 bit addressed (instruction length), but we are
+// given addresses that are byte (8bit addressed). 
+// Based on the MIPS RISC
+// implementation, we drop the bottom two bits, essentially dividing by 4.
+wire [31:0] pc_imem_addrshifted = pc_imem_addr >> 2;
 pc pc(
   .clock(clock),
   .reset(reset),
@@ -78,7 +82,7 @@ memory instruction_memory (
   .clock(clock),
   .write_enabled(),             // this will be wired up with a loader module
   .read_enabled(),              // not now
-  .input_address(pc_imem_addr), // input data comes from pc
+  .input_address(pc_imem_addrshifted), // input data comes from pc
   .input_data(),                // this will be wired up with a loader module
   .output_data(imem_dec_instr), // the output is instructions
   .err_invalid_address()       // we don't care
@@ -163,9 +167,12 @@ alu_32 alu (
   .err_invalid_control()
 );
 
+// data memory is also 32 bit addressed -- same logic as instruction memory:
+// we drop the bottom two bits, essentially dividing by 4.
+wire [31:0] alu_mem_addrshifted = alu_mem_addr >> 2;
 memory data_memory (
   .clock(clock),
-  .input_address(alu_mem_addr),
+  .input_address(alu_mem_addrshifted),
   .input_data(rf_mem_data),
   .read_enabled(control_memread),
   .write_enabled(control_memwrite),
@@ -183,7 +190,7 @@ mux3 wb_mux(
 
 adder pc_inc_adder(
   .input_a(pc_pcincadder),
-  .input_b(pc_inc_four),
+  .input_b(pc_inc_advance),
   .result(pcincadder_branchmux_a)
 );
 
@@ -212,9 +219,12 @@ mux2 branch_mux(
   .result(branchmux_jumpmux_a)
 );
 
+// TODO: Does this account for when reading from instruction memory addresses
+// such that we actually use the pc_upper bits?
+wire [31:0] ja_jumpmux_bshift = ja_jumpmux_b >> 2; // Divide by 4 after calculating jump address
 mux3 jump_mux(
   .input_a(branchmux_jumpmux_a),
-  .input_b(ja_jumpmux_b),
+  .input_b(ja_jumpmux_bshift),
   .input_c(rf_jumpmux_c),
   .choose(control_jumpmux),
   .result(jumpmux_pc)

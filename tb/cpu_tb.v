@@ -1,47 +1,69 @@
-
 // 2016 Ryan and Rui
-//
 
-module mips_cpu_test;
+module cpu_test;
 
 reg clock;
-reg [31:0] instruction;
-mips_cpu dut(clock, instruction);
+reg reset;
+cpu dut(clock, reset);
 
-// Test inputs
-/*
-addi $t0, $zero, 6  # (0110)
-addi $t1, $zero, 11 # (1011)
-*/
+// Test input instructions
 localparam 
-           t0 = 8,
-           t1 = 9,
-           t2 = 10,
-           addi_t0_zero_6   = 32'h20080006,
-	   addi_t1_zero_11  = 32'h2009000B,
-           addi_t0_t0_10    = 32'h2108000A,
-           addi_t2_t1_240   = 32'h212A00F0,
-           add_t2_t0_t1     = 32'h01095020,
+            t0 = 8,
+            t1 = 9,
+            t2 = 10,
+            addi_t0_zero_6   = 32'h20080006,
+	          addi_t1_zero_11  = 32'h2009000B,
+            addi_t0_t0_10    = 32'h2108000A,
+            addi_t2_t1_240   = 32'h212A00F0,
+            add_t2_t0_t1     = 32'h01095020,
            
-           addi_t0_zero_5   = 32'h20080005,
-           addi_t1_zero_9   = 32'h20090009,
-           sw_t0_zero_0     = 32'hAC080000,
-           sw_t1_zero_4     = 32'hAC090004,
-           lw_t0_zero_4     = 32'h8C080004;
-  /*
-  * addi $t0, $zero, 5
-    addi $t1, $zero, 9
+            addi_t0_zero_5   = 32'h20080005,
+            addi_t1_zero_9   = 32'h20090009,
+            sw_t0_zero_0     = 32'hAC080000,
+            sw_t1_zero_4     = 32'hAC090004,
+            lw_t0_zero_4     = 32'h8C080004,
 
-    sw $t0, 0($zero)	# 5
-    sw $t1, 4($zero)	# 9
 
-    lw $t0, 4($zero)	# 9
-    add $t0, $t0, $t1	# 9 + 9 = 18
-   *
-   */
+            // Begin branch assm:
+            // https://github.com/jmahler/mips-cpu/blob/master/test/t0005-branch.asm
+            addi_t0_zero_1   = 32'h2008_0001,
+            addi_t1_zero_2   = 32'h2009_0002,
+            addi_t0_t0_1     = 32'h2108_0001,
+            beq_t0_t1_skip1  = 32'h1109_0002, // jump forward 2
+            addi_t0_t0_255   = 32'h2108_00FF,
+            addi_t1_t1_255   = 32'h2129_00FF,
+            add_t0_t0_t1     = 32'h0109_4020,
+            add_t1_t0_t1     = 32'h0109_4820,
+            bne_t0_t1_skip2  = 32'h1509_0002, // jump forward 2
+            addi_t0_t0_4095  = 32'h2108_0FFF,
+            addi_t1_t1_4095  = 32'h2129_0FFF,
+
+            // jump Testing
+            //
+            // 0: addi t0, 0, 255
+            // 4: j 36
+            // ...
+            // 36: addi t1, 0, 255
+            // 40: jal 80
+            // 44: addi t0, 0, 4095
+            // 48: j 88
+            // ...
+            // 80: add t2, t1, t0
+            // 84: jr $31
+            // 88: DONE
+            addi_t0_zero_255      = 32'h2008_00FF,
+            j_36                  = 32'h0800_0024,
+            addi_t1_zero_255      = 32'h2009_00FF,
+            jal_80                = 32'h0C00_0050,
+            addi_t0_zero_4095     = 32'h2008_0FFF,
+            j_88                  = 32'h0800_0058,
+            //add_t2_t0_t1     = 32'h01095020,
+            jr_ra                 = 32'h03E0_0008;
+
+
+
 
 // Clock Generator (#10 period)
-
 initial 
 begin
   clock = 1; 
@@ -57,69 +79,128 @@ task assert_equal(
   input [31:0] expected,
   input [31:0] observed);
   begin
-    if (expected != observed)
-      $display("ASSERTION EQUAL FAIL: %p != %p", expected, observed);
+    if (expected === observed)
+      $display("(%d)SUCCESS:            %p == %p", $time, expected, observed);
     else
-      $display("SUCCESS:            %p == %p", expected, observed);
+      $display("(%d)ASSERTION EQUAL FAIL: %p != %p", $time, expected, observed);
   end
 endtask
 
+task load_instr (
+  input [31:0] addr, 
+  input [31:0] instruction
+);
+  dut.instruction_memory.data[addr >> 2] = instruction;
+endtask
 
 // Test logic
 initial begin
- // $display("Initializing registers");
+  /*
+  $display("TEST SUITE 1: ");
+  $display("Initializing instruction memory");
+  load_instr(0, addi_t0_zero_6);
+  load_instr(4, addi_t1_zero_11);
+  load_instr(8, addi_t0_t0_10);
+  load_instr(12, addi_t2_t1_240);
+  load_instr(16, add_t2_t0_t1);
+  load_instr(20, addi_t0_zero_5);
+  load_instr(24, addi_t1_zero_9);
+  load_instr(28, sw_t0_zero_0);
+  load_instr(32, sw_t1_zero_4);
+  load_instr(36, lw_t0_zero_4);
   // Don't need these since we are adding to the zero register
   //dut.regfile.register_file[8] = 2;
   //dut.regfile.register_file[9] = 3;
-  #10;
 
-  instruction = addi_t0_zero_6; 
-  #10;
+  $display("Resetting the program counter to 0th instruction");
+  reset = 1;
+  #20
+
+  $display("Running instructions!");
+  reset = 0;
+
   assert_equal(dut.regfile.register_file[t0], 6);
-
-  instruction = addi_t1_zero_11; 
   #10;
-  assert_equal(dut.regfile.register_file[t1], 11);
+  $display("PC: ");
+  assert_equal(dut.pc.pc_reg, 4);
 
-  instruction = addi_t0_t0_10; 
+  assert_equal(dut.regfile.register_file[t1], 11);
   #10;
   assert_equal(dut.regfile.register_file[t0], 16);
-
-  instruction = addi_t2_t1_240; 
   #10;
   assert_equal(dut.regfile.register_file[t2], 251);
-
-  instruction = add_t2_t0_t1; 
   #10;
   assert_equal(dut.regfile.register_file[t2], 27);
+  #10;
 
   $display("We started the second iteration");
-
-  instruction = addi_t0_zero_5; 
-  #10;
   assert_equal(dut.regfile.register_file[t0], 5);
-
-  instruction = addi_t1_zero_9; 
   #10;
   assert_equal(dut.regfile.register_file[t1], 9);
-
-  instruction = sw_t0_zero_0;  // storing t0 to memory[0]
   #10;
   assert_equal(dut.data_memory.data[0], 5);
-
-  instruction = sw_t1_zero_4; // storing t1 to memory[4]
   #10;
-  assert_equal(dut.data_memory.data[4], 9);
-  
-  instruction = lw_t0_zero_4;  // loading memory[4] into t0
+  assert_equal(dut.data_memory.data[1], 9); // Store into the '4th' byte address which is our 1st word address
   #10;
   assert_equal(dut.regfile.register_file[t0], 9);
+  #10;
+
+
+
+  #100;
+  $display("Initializing instruction memory");
+  load_instr(0, addi_t0_zero_1);
+  load_instr(4, addi_t1_zero_2);
+  load_instr(8, addi_t0_t0_1);
+  load_instr(12,beq_t0_t1_skip1);
+  load_instr(16,addi_t0_t0_255);
+  load_instr(20,addi_t1_t1_255);
+  load_instr(24,add_t0_t0_t1);
+  load_instr(28,add_t1_t0_t1);
+  load_instr(32,bne_t0_t1_skip2);
+  load_instr(36,addi_t0_t0_4095);
+  load_instr(40,addi_t1_t1_4095);
+
+  $display("Resetting the program counter to 0th instruction");
+  reset = 1;
+  #20
+
+  $display("Running instructions!");
+  reset = 0;
+  #200;
+  assert_equal(dut.regfile.register_file[t0], 4);
+  assert_equal(dut.regfile.register_file[t1], 6);
+
+  #100;
+*/
+
+  $display("Initializing instruction memory");
+  load_instr(0, addi_t0_zero_255 );
+  load_instr(4, j_36             );
+  load_instr(36, addi_t1_zero_255);
+  load_instr(40,jal_80           );
+  load_instr(44,addi_t0_zero_4095);
+  load_instr(48,j_88             );
+  load_instr(80,add_t2_t0_t1     );
+  load_instr(84,jr_ra            );
+
+  $display("Resetting the program counter to 0th instruction");
+  reset = 1;
+  #20
+
+  $display("Running instructions!");
+  reset = 0;
+  #200;
+  assert_equal(dut.regfile.register_file[t0], 4095);
+  assert_equal(dut.regfile.register_file[t1], 255);
+  assert_equal(dut.regfile.register_file[t2], 510);
+
 end
           /*
 
            addi_t0_zero_5   = 32'h20080005,
            addi_t1_zero_9   = 32'h20090009,
-           sw_t0_zero_0     = 32'hAC080000,
+           sw_t0_zero_0     = 32'hAC080000a
            sw_t1_zero_4     = 32'hAC090004,
            lw_t0_zero_4     = 32'h8C080004;
 
