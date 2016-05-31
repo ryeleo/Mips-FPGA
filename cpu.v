@@ -170,7 +170,6 @@ mux3 wb_mux(
 );
 
 
-/* =============================================================================== */
 
 
 assign pc_inc_four = 4;
@@ -180,9 +179,13 @@ adder pc_inc_adder(
   .result(pcincadder_branchmux_a)
 );
 
-
-
-
-
+wire [3:0] pcincadder_jumpaddr;
+wire [31:0] ja_jumpmux_b;
+assign pcincadder_jumpaddr = pcincadder_branchmux_a[31:28];
+jump_addr jumpaddr(
+  .jump_relative_addr(dec_jumptarg),
+  .pc_upper(pcincadder_jumpaddr),
+  .jump_addr(ja_jumpmux_b)
+);
 
 endmodule
