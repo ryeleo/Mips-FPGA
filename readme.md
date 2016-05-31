@@ -1,2 +1,1 @@
-# todo:
-#   WIRE SHIT
+# Mips FPGA Processor
