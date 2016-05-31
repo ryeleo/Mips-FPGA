@@ -188,4 +188,15 @@ jump_addr jumpaddr(
   .jump_addr(ja_jumpmux_b)
 );
 
+wire [31:0] pcincadder_branchadder;
+wire [31:0] sext_branchadder;
+wire [31:0] branchadder_branchmux_b;
+assign sext_branchadder = sext_alusrcmux_b << 2; //Left shift 2 bits before branch adder. From sext
+assign pcincadder_branchadder = pcincadder_branchmux_a;
+adder branch_adder(
+  .input_a(pcincadder_branchadder),
+  .input_b(sext_branchadder),
+  .result(branchadder_branchmux_b)
+);
+
 endmodule
