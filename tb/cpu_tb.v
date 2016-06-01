@@ -6,9 +6,7 @@ reg clock;
 reg reset;
 cpu dut(clock, reset);
 
-  integer i;
-
-parameter [50:0] instr [31:0] = '{
+localparam [31:0] fib_instr [43:0] = '{
           32'h201d0100,
           32'h2010000c,
           32'hafb00000,
@@ -108,8 +106,6 @@ localparam
             jr_ra                 = 32'h03E0_0008;
 
 
-
-
 // Clock Generator (#10 period)
 initial 
 begin
@@ -141,6 +137,7 @@ task load_instr (
 endtask
 
 // Test logic
+integer i;
 initial begin
   /*
   $display("TEST SUITE 1: ");
@@ -242,9 +239,10 @@ initial begin
   assert_equal(dut.regfile.register_file[t2], 510);
 */
 
-  //1 load instructions into memory
+
+  $display("Running Fibbonacci! Fib(4)");
   for (i = 0; i < 44; i = i + 1) begin
-      load_instr(i*4, instr[i]);
+      load_instr(i*4, fib_instr[i]);
   end
 
   // 2 reset the CPU
@@ -254,21 +252,10 @@ initial begin
 
   $display("Running instructions!");
   reset = 0;
-  #10000; // 180 clock cycles
+  #10000; // 1000 clock cycles
 
   // 3 Make assertions
   assert_equal(dut.regfile.register_file[t0], 144);
 
 end
-          /*
-
-           addi_t0_zero_5   = 32'h20080005,
-           addi_t1_zero_9   = 32'h20090009,
-           sw_t0_zero_0     = 32'hAC080000a
-           sw_t1_zero_4     = 32'hAC090004,
-           lw_t0_zero_4     = 32'h8C080004;
-
-          */
-
-
 endmodule
