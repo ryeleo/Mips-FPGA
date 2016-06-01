@@ -6,6 +6,53 @@ reg clock;
 reg reset;
 cpu dut(clock, reset);
 
+  integer i;
+
+parameter [50:0] instr [31:0] = '{
+          32'h201d0100,
+          32'h2010000c,
+          32'hafb00000,
+          32'h23bdfffc,
+          32'h0c000009,
+          32'h23bd0004,
+          32'h8fb10000,
+          32'hac110024,
+          32'h0800002b,
+          32'hafbf0000,
+          32'h23bdfffc,
+          32'hafbe0000,
+          32'h23bdfffc,
+          32'h23be000c,
+          32'h8fc80000,
+          32'h20090002,
+          32'h00005820,
+          32'h0128582a,
+          32'h15600002,
+          32'h20080001,
+          32'h08000023,
+          32'h2108ffff,
+          32'hafa80000,
+          32'h23bdfffc,
+          32'h0c000009,
+          32'h8fc80000,
+          32'h2108fffe,
+          32'hafa80000,
+          32'h23bdfffc,
+          32'h0c000009,
+          32'h23bd0004,
+          32'h8fa80000,
+          32'h23bd0004,
+          32'h8fa90000,
+          32'h01094020,
+          32'h23bd0004,
+          32'h8fbe0000,
+          32'h23bd0004,
+          32'h8fbf0000,
+          32'h23bd0004,
+          32'hafa80000,
+          32'h23bdfffc,
+          32'h03e00008,
+          32'h20000000 };
 // Test input instructions
 localparam 
             t0 = 8,
@@ -173,7 +220,7 @@ initial begin
 
   #100;
 */
-
+  /*
   $display("Initializing instruction memory");
   load_instr(0, addi_t0_zero_255 );
   load_instr(4, j_36             );
@@ -183,7 +230,6 @@ initial begin
   load_instr(48,j_88             );
   load_instr(80,add_t2_t0_t1     );
   load_instr(84,jr_ra            );
-
   $display("Resetting the program counter to 0th instruction");
   reset = 1;
   #20
@@ -194,6 +240,24 @@ initial begin
   assert_equal(dut.regfile.register_file[t0], 4095);
   assert_equal(dut.regfile.register_file[t1], 255);
   assert_equal(dut.regfile.register_file[t2], 510);
+*/
+
+  //1 load instructions into memory
+  for (i = 0; i < 44; i = i + 1) begin
+      load_instr(i*4, instr[i]);
+  end
+
+  // 2 reset the CPU
+  $display("Resetting the program counter to 0th instruction");
+  reset = 1;
+  #20
+
+  $display("Running instructions!");
+  reset = 0;
+  #10000; // 180 clock cycles
+
+  // 3 Make assertions
+  assert_equal(dut.regfile.register_file[t0], 144);
 
 end
           /*
