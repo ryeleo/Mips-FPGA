@@ -1,12 +1,14 @@
 // 2016 Ryan and Rui
 
+// We got rid of the shift right 2 in the jump mux for JAL
+
 module cpu_test;
 
 reg clock;
 reg reset;
 cpu dut(clock, reset);
 
-localparam [31:0] fib_instr [43:0] = '{
+localparam [31:0] fib_instr [0:43] = '{
           32'h201d0100,
           32'h2010000c,
           32'hafb00000,
@@ -252,7 +254,7 @@ initial begin
 
   $display("Running instructions!");
   reset = 0;
-  #10000; // 1000 clock cycles
+  #1000000; // 1000 clock cycles
 
   // 3 Make assertions
   assert_equal(dut.regfile.register_file[t0], 144);
