@@ -221,10 +221,10 @@ mux2 branch_mux(
 
 // TODO: Does this account for when reading from instruction memory addresses
 // such that we actually use the pc_upper bits?
-wire [31:0] ja_jumpmux_bshift = ja_jumpmux_b >> 2; // Divide by 4 after calculating jump address
+// wire [31:0] ja_jumpmux_bshift = ja_jumpmux_b >> 2; // Divide by 4 after calculating jump address
 mux3 jump_mux(
   .input_a(branchmux_jumpmux_a),
-  .input_b(ja_jumpmux_bshift),
+  .input_b(ja_jumpmux_b),
   .input_c(rf_jumpmux_c),
   .choose(control_jumpmux),
   .result(jumpmux_pc)

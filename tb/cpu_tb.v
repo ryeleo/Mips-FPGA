@@ -1,11 +1,58 @@
 // 2016 Ryan and Rui
 
+// We got rid of the shift right 2 in the jump mux for JAL
+
 module cpu_test;
 
 reg clock;
 reg reset;
 cpu dut(clock, reset);
 
+localparam [31:0] fib_instr [0:43] = '{
+          32'h201d0100,
+          32'h2010000c,
+          32'hafb00000,
+          32'h23bdfffc,
+          32'h0c000009,
+          32'h23bd0004,
+          32'h8fb10000,
+          32'hac110024,
+          32'h0800002b,
+          32'hafbf0000,
+          32'h23bdfffc,
+          32'hafbe0000,
+          32'h23bdfffc,
+          32'h23be000c,
+          32'h8fc80000,
+          32'h20090002,
+          32'h00005820,
+          32'h0128582a,
+          32'h15600002,
+          32'h20080001,
+          32'h08000023,
+          32'h2108ffff,
+          32'hafa80000,
+          32'h23bdfffc,
+          32'h0c000009,
+          32'h8fc80000,
+          32'h2108fffe,
+          32'hafa80000,
+          32'h23bdfffc,
+          32'h0c000009,
+          32'h23bd0004,
+          32'h8fa80000,
+          32'h23bd0004,
+          32'h8fa90000,
+          32'h01094020,
+          32'h23bd0004,
+          32'h8fbe0000,
+          32'h23bd0004,
+          32'h8fbf0000,
+          32'h23bd0004,
+          32'hafa80000,
+          32'h23bdfffc,
+          32'h03e00008,
+          32'h20000000 };
 // Test input instructions
 localparam 
             t0 = 8,
@@ -61,8 +108,6 @@ localparam
             jr_ra                 = 32'h03E0_0008;
 
 
-
-
 // Clock Generator (#10 period)
 initial 
 begin
@@ -94,6 +139,7 @@ task load_instr (
 endtask
 
 // Test logic
+integer i;
 initial begin
   /*
   $display("TEST SUITE 1: ");
@@ -173,7 +219,7 @@ initial begin
 
   #100;
 */
-
+  /*
   $display("Initializing instruction memory");
   load_instr(0, addi_t0_zero_255 );
   load_instr(4, j_36             );
@@ -183,7 +229,6 @@ initial begin
   load_instr(48,j_88             );
   load_instr(80,add_t2_t0_t1     );
   load_instr(84,jr_ra            );
-
   $display("Resetting the program counter to 0th instruction");
   reset = 1;
   #20
@@ -194,17 +239,25 @@ initial begin
   assert_equal(dut.regfile.register_file[t0], 4095);
   assert_equal(dut.regfile.register_file[t1], 255);
   assert_equal(dut.regfile.register_file[t2], 510);
+*/
+
+
+  $display("Running Fibbonacci! Fib(4)");
+  for (i = 0; i < 44; i = i + 1) begin
+      load_instr(i*4, fib_instr[i]);
+  end
+
+  // 2 reset the CPU
+  $display("Resetting the program counter to 0th instruction");
+  reset = 1;
+  #20
+
+  $display("Running instructions!");
+  reset = 0;
+  #1000000; // 1000 clock cycles
+
+  // 3 Make assertions
+  assert_equal(dut.regfile.register_file[t0], 144);
 
 end
-          /*
-
-           addi_t0_zero_5   = 32'h20080005,
-           addi_t1_zero_9   = 32'h20090009,
-           sw_t0_zero_0     = 32'hAC080000a
-           sw_t1_zero_4     = 32'hAC090004,
-           lw_t0_zero_4     = 32'h8C080004;
-
-          */
-
-
 endmodule
