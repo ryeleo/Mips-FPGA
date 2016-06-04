@@ -29,7 +29,7 @@ module mux3 (
       CHOOSE_B: result <= input_b;
       CHOOSE_C: result <= input_c;
       // default gets the result from the most recent value
-      default:  result <= result;
+      default:  result <= 1'bx;
     endcase
   end
 endmodule
