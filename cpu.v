@@ -78,7 +78,8 @@ pc pc(
   .pc_out(pc_imem_addr)
 );
 
-memory instruction_memory ( 
+// shrinked the memory size to be able to synth
+memory #(.MEMORY_SIZE(64) )instruction_memory ( 
   .clock(clock),
   .write_enabled(),             // this will be wired up with a loader module
   .read_enabled(),              // not now
@@ -170,7 +171,7 @@ alu_32 alu (
 // data memory is also 32 bit addressed -- same logic as instruction memory:
 // we drop the bottom two bits, essentially dividing by 4.
 wire [31:0] alu_mem_addrshifted = alu_mem_addr >> 2;
-memory data_memory (
+memory #(.MEMORY_SIZE(64) ) data_memory (
   .clock(clock),
   .input_address(alu_mem_addrshifted),
   .input_data(rf_mem_data),
