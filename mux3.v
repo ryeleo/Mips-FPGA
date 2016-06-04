@@ -28,8 +28,8 @@ module mux3 (
       CHOOSE_A: result <= input_a;
       CHOOSE_B: result <= input_b;
       CHOOSE_C: result <= input_c;
-        // default gets the result from the most recent value
-        // $display("UNknown choose for mux3");
+      // default gets the result from the most recent value
+      default:  result <= result;
     endcase
   end
 endmodule
