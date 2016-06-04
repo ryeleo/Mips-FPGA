@@ -1,5 +1,4 @@
 // 2016 Ryan Leonard & Rui Tu & Frank Arana
-
 module cpu(
   clock,
   reset
