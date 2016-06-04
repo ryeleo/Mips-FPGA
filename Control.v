@@ -56,7 +56,7 @@ module control_32(
         * LSB is 'equal' bit -- 1 implies BEQ, 0 implies BNE */
           branch_noteq  = 2'b11,
           branch_equal  = 2'b10,
-          branch_off  = 2'b00,
+          branch_off    = 2'b00,
 
 
         /* jump mux3 possible values -- taken from same url as reg_dst */
@@ -202,7 +202,6 @@ module control_32(
 
 				alu_op             <= aluop_invalid;
 				err_illegal_opcode <= on;
-				$display("cannot decode instruction %b\n", opcode);
 			end
 		endcase
 	end

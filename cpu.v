@@ -1,10 +1,10 @@
 // 2016 Ryan Leonard & Rui Tu & Frank Arana
 module cpu(
   clock,
-  reset
+  switch0
 );
 input wire clock;
-input wire reset;
+input wire switch0;
 
 wire [31:0] mem_wbmux_b;
 wire [31:0] pcincadder_wbmux_pcp4;
@@ -52,14 +52,27 @@ wire [1:0] control_rfwritemux;
 wire       control_regwrite;
 wire [1:0] control_jumpmux;
 wire [1:0] control_branch;
+wire [31:0] loader_imemloadmux_a;
+wire [31:0] pc_imemloadmux_b;
+wire [31:0] imemloadmux_imem_addr;
+wire [31:0] loader_imem_data;
+wire        sw0_imemloadmux;  // this comes from the output of the cpu state switch
+wire        sw0_pc_reset;
+wire        sw0_imem_writeenable;
+wire [31:0] pc_imem_addrshifted;
 
+assign sw0_imemloadmux        = switch0; 
+assign sw0_pc_reset           = ~switch0;
+assign sw0_imem_writeenable   = ~switch0;
+assign pc_imem_addrshifted = pc_imem_addr >> 2;
+assign pc_imemloadmux_b       = pc_imem_addrshifted;
 assign dec_rfwritemux_a = dec_rf_readaddrt;
 assign rf_mem_data = rf_alusrcmux_a;
 assign rf_jumpmux_c = rf_alu_a;
 assign pcincadder_jumpaddr = pcincadder_branchmux_a[31:28];
 assign sext_branchadder = sext_alusrcmux_b << 2; //Left shift 2 bits before branch adder. From sext
 assign pcincadder_wbmux_pcp4 = pcincadder_branchmux_a;
-assign pc_inc_advance = 4;
+assign pc_inc_advance = (switch0) ? 4 : 0;
 assign alu_wbmux_a = alu_mem_addr;
 assign pc_pcincadder = pc_imem_addr;
 assign pcincadder_branchadder = pcincadder_branchmux_a;
@@ -69,23 +82,35 @@ assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
 // given addresses that are byte (8bit addressed). 
 // Based on the MIPS RISC
 // implementation, we drop the bottom two bits, essentially dividing by 4.
-wire [31:0] pc_imem_addrshifted = pc_imem_addr >> 2;
 pc pc(
   .clock(clock),
-  .reset(reset),
+  .reset(sw0_pc_reset),
   .pc_in(jumpmux_pc),
   .pc_out(pc_imem_addr)
 );
 
 // shrinked the memory size to be able to synth
-memory #(.MEMORY_SIZE(64) )instruction_memory ( 
+memory #(.MEMORY_SIZE(64)) instruction_memory ( 
   .clock(clock),
-  .write_enabled(),             // this will be wired up with a loader module
-  .read_enabled(),              // not now
-  .input_address(pc_imem_addrshifted), // input data comes from pc
-  .input_data(),                // this will be wired up with a loader module
-  .output_data(imem_dec_instr), // the output is instructions
-  .err_invalid_address()       // we don't care
+  .write_enabled(sw0_imem_writeenable),
+  .read_enabled(switch0),              		   
+  .input_address(imemloadmux_imem_addr), // input data comes from mux2
+  .input_data(loader_imem_data),                  
+  .output_data(imem_dec_instr),         // the output is instructions
+  .err_invalid_address()       			    // we don't care about err
+);
+
+mux2 imem_load_mux(
+	.input_a(loader_imemloadmux_a),
+	.input_b(pc_imemloadmux_b),
+	.choose(sw0_imemloadmux),
+	.result(imemloadmux_imem_addr)
+);
+
+instr_loader instrloader(
+	.clock(clock),
+	.address(loader_imemloadmux_a),
+	.data(loader_imem_data)
 );
 
 decoder_32 decode(
@@ -170,7 +195,7 @@ alu_32 alu (
 // data memory is also 32 bit addressed -- same logic as instruction memory:
 // we drop the bottom two bits, essentially dividing by 4.
 wire [31:0] alu_mem_addrshifted = alu_mem_addr >> 2;
-memory #(.MEMORY_SIZE(64) ) data_memory (
+memory #(.MEMORY_SIZE(1024) ) data_memory (
   .clock(clock),
   .input_address(alu_mem_addrshifted),
   .input_data(rf_mem_data),

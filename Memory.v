@@ -41,6 +41,6 @@ begin
     data[input_address] <= input_data;
 end
   
-assign output_data = data[input_address];
+assign output_data = read_enabled ? data[input_address] : 32'h0;
 
 endmodule
