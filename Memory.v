@@ -30,7 +30,7 @@ output wire  [WORD_SIZE-1:0]	output_data;
 output reg                    err_invalid_address;
 
 // A data structure 
-reg [WORD_SIZE:0]  data[MEMORY_SIZE:0];
+reg [WORD_SIZE-1:0]  data[MEMORY_SIZE-1:0];
 
 // Begin computing on positive edge
 always @ (negedge clock) 
