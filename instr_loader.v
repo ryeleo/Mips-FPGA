@@ -1,3 +1,6 @@
+// 2016 -- Ryan Leonard
+// Instruction loading module that is hardcoded for fibbonacci
+
 module instr_loader(
   clock,
   data,
