@@ -7,7 +7,7 @@ always @(*) begin
   result_32[15:0] <= input_16;
   case (input_16[15]) 
     1'b0: result_32 [31:16] <= 16'h0000;
-    1'b1: result_32 [31:16] <= 16'h1111;
+    1'b1: result_32 [31:16] <= 16'hFFFF;
   endcase
 end
 endmodule
