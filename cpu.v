@@ -1,10 +1,12 @@
 // 2016 Ryan Leonard & Rui Tu & Frank Arana
 module cpu(
   clock,
-  run_switch
+  run_switch,
+  output_reg9
 );
 input wire clock;
 input wire run_switch;
+output wire [31:0] output_reg9;
 
 wire [31:0] mem_wbmux_b;
 wire [31:0] pcincadder_wbmux_pcp4;
@@ -148,6 +150,7 @@ mux3 #(.width(5)) rfwrite_mux (
   .result(rfwritemux_rf_writeaddr)
 );
 
+
 rf_32 regfile (
   .clock(clock),
   .read_addr_s(dec_rf_readaddrs),
@@ -157,9 +160,9 @@ rf_32 regfile (
   .write_enabled(control_regwrite),
   .read_enabled(),
   .outA(rf_alu_a),
-  .outB(rf_alusrcmux_a)
+  .outB(rf_alusrcmux_a),
+  .output_reg9(output_reg9)
 );
-
 
 sign_extend_32 sign_ext(
   .input_16(dec_immediate),
@@ -195,7 +198,7 @@ alu_32 alu (
 // data memory is also 32 bit addressed -- same logic as instruction memory:
 // we drop the bottom two bits, essentially dividing by 4.
 wire [31:0] alu_mem_addrshifted = alu_mem_addr >> 2;
-memory #(.MEMORY_SIZE(1024) ) data_memory (
+memory #(.MEMORY_SIZE(300) ) data_memory (
   .clock(clock),
   .input_address(alu_mem_addrshifted),
   .input_data(rf_mem_data),

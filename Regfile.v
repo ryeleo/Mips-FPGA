@@ -21,7 +21,8 @@ module rf_32(
   write_addr,
   write_data,
   outA, 
-  outB
+  outB,
+  output_reg9
 );
 
 localparam 
@@ -39,6 +40,7 @@ input wire [INDEX_SIZE-1:0]  write_addr;
 input wire [REG_SIZE-1:0] write_data;
 output wire [REG_SIZE-1:0] outA;
 output wire [REG_SIZE-1:0] outB;
+output wire [31:0] output_reg9;
 
 // A 'memories' data structure representing:
 //    32 registeread_addr_s each 32 bits
@@ -55,5 +57,6 @@ end
 // Read logic is combinational
 assign outA = register_file[read_addr_s];
 assign outB = register_file[read_addr_t];
+assign output_reg9 = register_file[9];
 
 endmodule
