@@ -476,7 +476,7 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to PS2_DAT2
 #============================================================
 # SW
 #============================================================
-set_location_assignment PIN_AB12 -to SW[0]
+set_location_assignment PIN_AB12 -to SW_0
 set_location_assignment PIN_AC12 -to SW[1]
 set_location_assignment PIN_AF9 -to SW[2]
 set_location_assignment PIN_AF10 -to SW[3]
@@ -486,7 +486,7 @@ set_location_assignment PIN_AE11 -to SW[6]
 set_location_assignment PIN_AC9 -to SW[7]
 set_location_assignment PIN_AD10 -to SW[8]
 set_location_assignment PIN_AE12 -to SW[9]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW_0
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[1]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[2]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW[3]

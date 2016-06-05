@@ -1,13 +1,13 @@
 module mips_fpga (
-  KEY_0,
+  SW_0,
   CLOCK_50
 ); 
 
-input wire KEY_0;
+input wire SW_0;
 input wire CLOCK_50;
 
 cpu cpu(
-  .reset(KEY_0),
+  .run_switch(SW_0),
   .clock(CLOCK_50)
 );
 
