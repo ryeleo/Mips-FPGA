@@ -1,10 +1,10 @@
 // 2016 Ryan Leonard & Rui Tu & Frank Arana
 module cpu(
   clock,
-  switch0
+  run_switch
 );
 input wire clock;
-input wire switch0;
+input wire run_switch;
 
 wire [31:0] mem_wbmux_b;
 wire [31:0] pcincadder_wbmux_pcp4;
@@ -61,9 +61,9 @@ wire        sw0_pc_reset;
 wire        sw0_imem_writeenable;
 wire [31:0] pc_imem_addrshifted;
 
-assign sw0_imemloadmux        = switch0; 
-assign sw0_pc_reset           = ~switch0;
-assign sw0_imem_writeenable   = ~switch0;
+assign sw0_imemloadmux        = run_switch; 
+assign sw0_pc_reset           = ~run_switch;
+assign sw0_imem_writeenable   = ~run_switch;
 assign pc_imem_addrshifted = pc_imem_addr >> 2;
 assign pc_imemloadmux_b       = pc_imem_addrshifted;
 assign dec_rfwritemux_a = dec_rf_readaddrt;
@@ -72,7 +72,7 @@ assign rf_jumpmux_c = rf_alu_a;
 assign pcincadder_jumpaddr = pcincadder_branchmux_a[31:28];
 assign sext_branchadder = sext_alusrcmux_b << 2; //Left shift 2 bits before branch adder. From sext
 assign pcincadder_wbmux_pcp4 = pcincadder_branchmux_a;
-assign pc_inc_advance = (switch0) ? 4 : 0;
+assign pc_inc_advance = (run_switch) ? 4 : 0;
 assign alu_wbmux_a = alu_mem_addr;
 assign pc_pcincadder = pc_imem_addr;
 assign pcincadder_branchadder = pcincadder_branchmux_a;
@@ -93,7 +93,7 @@ pc pc(
 memory #(.MEMORY_SIZE(64)) instruction_memory ( 
   .clock(clock),
   .write_enabled(sw0_imem_writeenable),
-  .read_enabled(switch0),              		   
+  .read_enabled(run_switch),              		   
   .input_address(imemloadmux_imem_addr), // input data comes from mux2
   .input_data(loader_imem_data),                  
   .output_data(imem_dec_instr),         // the output is instructions
