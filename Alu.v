@@ -143,6 +143,8 @@ begin // BEG main
     default: begin
       err_invalid_control <= ON; 
       err_overflow <= OFF;
+		cout <= OFF;
+      result <= 32'bx;
       // $display("cannot decode control signal %b: ", control);
     end
   endcase
