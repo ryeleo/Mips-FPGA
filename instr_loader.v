@@ -14,18 +14,18 @@ output reg [31:0] data;
 output reg [31:0] address;
 
 // Fibbonaci instruction sequence
-wire [31:0] fib_instr [0:43];
+wire [31:0] fib_instr [0:44];
 
-assign fib_instr[0] = 32'h201d0100;
-assign fib_instr[1] = 32'h2010000c; // Fib(12) 
-assign fib_instr[2] = 32'hafb00000;
-assign fib_instr[3] = 32'h23bdfffc;
-assign fib_instr[4] = 32'h0c000009;
-assign fib_instr[5] = 32'h23bd0004;
-assign fib_instr[6] = 32'h8fb10000;
-assign fib_instr[7] = 32'hac110024;
-assign fib_instr[8] = 32'h0800002b;
-assign fib_instr[9] = 32'hafbf0000;
+assign fib_instr[0]  = 32'h201d0100;
+assign fib_instr[1]  = 32'h2010000c; // Fib(12) 
+assign fib_instr[2]  = 32'hafb00000;
+assign fib_instr[3]  = 32'h23bdfffc;
+assign fib_instr[4]  = 32'h0c000009;
+assign fib_instr[5]  = 32'h23bd0004;
+assign fib_instr[6]  = 32'h8fb10000;
+assign fib_instr[7]  = 32'hac110024;
+assign fib_instr[8]  = 32'h0800002b;
+assign fib_instr[9]  = 32'hafbf0000;
 assign fib_instr[10] = 32'h23bdfffc;
 assign fib_instr[11] = 32'hafbe0000;
 assign fib_instr[12] = 32'h23bdfffc;
@@ -60,6 +60,7 @@ assign fib_instr[40] = 32'hafa80000;
 assign fib_instr[41] = 32'h23bdfffc;
 assign fib_instr[42] = 32'h03e00008;
 assign fib_instr[43] = 32'h20000000;
+assign fib_instr[44] = 32'h0800002b;
 
           // This block loops forever pumping out instructions and addresses
           // i is our iterator 

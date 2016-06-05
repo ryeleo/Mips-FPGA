@@ -2,11 +2,13 @@
 module cpu(
   clock,
   run_switch,
-  output_t0
+  output_t0,
+  output_pc // shifted to be word addressed
 );
 input wire clock;
 input wire run_switch;
 output wire [31:0] output_t0;
+output wire [31:0] output_pc;
 
 wire [31:0] mem_wbmux_b;
 wire [31:0] pcincadder_wbmux_pcp4;
@@ -84,6 +86,7 @@ assign rfwritemux_c = 31; // Hardcoded for jump and link instruction
 // given addresses that are byte (8bit addressed). 
 // Based on the MIPS RISC
 // implementation, we drop the bottom two bits, essentially dividing by 4.
+assign output_pc = pc_imem_addrshifted;
 pc pc(
   .clock(clock),
   .reset(sw0_pc_reset),
@@ -92,7 +95,7 @@ pc pc(
 );
 
 // shrinked the memory size to be able to synth
-memory #(.MEMORY_SIZE(43)) instruction_memory ( 
+memory #(.MEMORY_SIZE(45)) instruction_memory ( 
   .clock(clock),
   .write_enabled(sw0_imem_writeenable),
   .read_enabled(run_switch),              		   

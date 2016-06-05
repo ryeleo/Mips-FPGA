@@ -1,5 +1,6 @@
 module mips_fpga (
   SW,
+  KEY,
   CLOCK_50,
   HEX0,
   HEX1,
@@ -8,6 +9,7 @@ module mips_fpga (
   LEDR
 ); 
 
+input  [3:0] KEY;
 input  [9:0] SW;
 input  CLOCK_50;
 output [6:0] HEX0;
@@ -16,14 +18,16 @@ output [6:0] HEX2;
 output [6:0] HEX3;
 output [9:0] LEDR;
 
-wire main_clk = CLOCK_50;
+wire main_clk = KEY[1];
 
-wire [31:0] res;
+wire [31:0] t0;
+wire [31:0] pc;
 
 cpu cpu(
   .run_switch(SW[0]),
   .clock(main_clk),
-  .output_reg9(res)
+  .output_t0(t0),
+  .output_pc(pc)
 );
 
 //assign LEDR[9] = SW[0];
@@ -33,8 +37,11 @@ cpu cpu(
 
 //assign LEDR[1] = SW[1];
 
+
+//wire [31:0] t0 = 32'd144;
+
 LED_7seg ledseg0(
-	.BCD(res[3:0]),
+	.BCD(pc[3:0]),
 	.segA(HEX0[0]),
   .segB(HEX0[1]),
   .segC(HEX0[2]),
@@ -45,7 +52,7 @@ LED_7seg ledseg0(
   .segDP()
 );
 LED_7seg ledseg1(
-	.BCD(res[7:4]),
+	.BCD(pc[7:4]),
 	.segA(HEX1[0]),
   .segB(HEX1[1]),
   .segC(HEX1[2]),
@@ -56,7 +63,7 @@ LED_7seg ledseg1(
   .segDP()
 );
 LED_7seg ledseg2(
-	.BCD(res[11:8]),
+	.BCD(pc[11:8]),
 	.segA(HEX2[0]),
   .segB(HEX2[1]),
   .segC(HEX2[2]),
@@ -67,7 +74,7 @@ LED_7seg ledseg2(
   .segDP()
 );
 LED_7seg ledseg3(
-	.BCD(res[15:12]),
+	.BCD(pc[15:12]),
 	.segA(HEX3[0]),
   .segB(HEX3[1]),
   .segC(HEX3[2]),

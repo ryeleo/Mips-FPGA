@@ -48,7 +48,7 @@ parameter
   ON = 1'b1;
 
 localparam 
-  INVALID = 33'bx,
+  INVALID = 33'b0,
   WORD_SIZE = 32,
   MSB = WORD_SIZE-1; // Most signficant bit
 
@@ -143,8 +143,8 @@ begin // BEG main
     default: begin
       err_invalid_control <= ON; 
       err_overflow <= OFF;
-		cout <= OFF;
-      result <= 32'bx;
+      cout <= OFF;
+      result <= 32'b0;
       // $display("cannot decode control signal %b: ", control);
     end
   endcase
