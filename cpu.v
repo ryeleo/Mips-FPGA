@@ -2,11 +2,11 @@
 module cpu(
   clock,
   run_switch,
-  output_reg9
+  output_t0
 );
 input wire clock;
 input wire run_switch;
-output wire [31:0] output_reg9;
+output wire [31:0] output_t0;
 
 wire [31:0] mem_wbmux_b;
 wire [31:0] pcincadder_wbmux_pcp4;
@@ -92,7 +92,7 @@ pc pc(
 );
 
 // shrinked the memory size to be able to synth
-memory #(.MEMORY_SIZE(64)) instruction_memory ( 
+memory #(.MEMORY_SIZE(43)) instruction_memory ( 
   .clock(clock),
   .write_enabled(sw0_imem_writeenable),
   .read_enabled(run_switch),              		   
@@ -161,7 +161,7 @@ rf_32 regfile (
   .read_enabled(),
   .outA(rf_alu_a),
   .outB(rf_alusrcmux_a),
-  .output_reg9(output_reg9)
+  .output_t0(output_t0)
 );
 
 sign_extend_32 sign_ext(
@@ -198,7 +198,7 @@ alu_32 alu (
 // data memory is also 32 bit addressed -- same logic as instruction memory:
 // we drop the bottom two bits, essentially dividing by 4.
 wire [31:0] alu_mem_addrshifted = alu_mem_addr >> 2;
-memory #(.MEMORY_SIZE(300) ) data_memory (
+memory #(.MEMORY_SIZE(256) ) data_memory (
   .clock(clock),
   .input_address(alu_mem_addrshifted),
   .input_data(rf_mem_data),

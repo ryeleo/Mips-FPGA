@@ -5,7 +5,8 @@ module cpu_test;
 
 reg clock;
 reg running_switch;
-cpu dut(clock, running_switch);
+wire [31:0] reg_t0;
+cpu dut(clock, running_switch, reg_t0);
 
 localparam 
             t0 = 8,
@@ -46,5 +47,6 @@ initial begin
   #100000; // 1000 cycles
   // 3 Make assertions
   assert_equal(dut.regfile.register_file[t0], 144);
+  assert_equal(reg_t0, 144);
 end
 endmodule
