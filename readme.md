@@ -25,7 +25,7 @@ The IP we created as building blocks include:
 
 Each IP was tested individually by a testbench, e.g. tb/alu_tb.v exist for the sole purpose of testing alu.v.
 
-TBD: Discussion about each testbench?
+<!--TBD: Discussion about each testbench? -->
 
 ### IP Composition
 
