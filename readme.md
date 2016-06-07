@@ -44,6 +44,10 @@ When it came time to bring the full datapath into a single module, we began by p
 
 For testing this fully composed cpu module, we have to be able to provide inputs into the Instruction memory which is traditionally a read only memory component. The two hurdles are (1) assembling instructions and (2) injecting those instructions into instruction memory. To assemble the instructions, we simply used an online assembler which was verified by Rui Tu. To bypass the hurdle of having read-only memory for the sake of simulation and testing, we simply gain access to the instruction memory using the object-oriented dot-syntax of verilog, e.g. "dut.instr_memory.data[0] = noop_instruction; dut.instr_memory.data[1] = jump_to_0th_instruction" Obviously this will not hold up when it comes to synthesis, but it makes it simple to validate our design.
 
-We ran some iterations of basic instruction sequences. First we ran several instructions for basic R-type instructions. In our second iteration, we tested R-type instructions and all of our implemented J-type instructions including J, JAL, and JR. Third, we performed testing of our branch instructions in conjunction with R-type instructions. Finally we assembled all of a Fibonacci implementation for testing and found that it achieved the correct result for several test input values from 4 to 32.
+Once we had the ability to push instructions into instruction memory and begin their execution, We ran several iterations of basic instruction sequences. 
+First we ran several instructions for basic R-type instructions. 
+As a second iteration of instruction testing, we ran R-type instructions and all of our implemented J-type instructions including J, JAL, and JR. 
+Third, we performed testing of our branch instructions in conjunction with R-type instructions. 
+Finally we assembled all of a Fibonacci implementation for testing and found that it achieved the correct result for several hardcoded test input values ranging from 4 to 32.
 
 <!-- #### Adding Loader and building "FPGA Driver" Moudle -->
