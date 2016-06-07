@@ -29,5 +29,14 @@ TBD: Discussion about each testbench?
 
 ### IP Composition
 
-When it came time to bring the full datapath into a single module, we discovered...
+We've gone through three iterations of composition:
+
+1. Register File + ALU, to
+2. Register File + ALU + Instruction Memory, and finally resulting in
+3. a complete mips processor employing all 13 IP modules, including: 18 instantiations of these modules, ~50 interconnect nets to setup the datapaths, along with a driving clock port and a reset port which resets the PC to point back to the 0th instruction.
+Our gal in our original iteration
+
+We will discuss the lattermost point from above as this was the most interesting compositional hurdle.
+
+When it came time to bring the full datapath into a single module, we began by physically portraying the complex system via sheets of scratch paper and sticky notes. We found this to be an effective way of determining the connections between each module. Furthermore, we found this to be an effective method
 
