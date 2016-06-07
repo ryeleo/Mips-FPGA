@@ -38,5 +38,6 @@ Our gal in our original iteration
 
 We will discuss the lattermost point from above as this was the most interesting compositional hurdle.
 
-When it came time to bring the full datapath into a single module, we began by physically portraying the complex system via sheets of scratch paper and sticky notes. We found this to be an effective way of determining the connections between each module. Furthermore, we found this to be an effective method
+When it came time to bring the full datapath into a single module, we began by physically portraying the complex system via sheets of scratch paper and sticky notes. We found this to be an effective way of determining good names for each module instantiation as well as the names of the connections between each instantiation. Furthermore, we found this to be an effective method for visualizing our overall dataflow to discover our critical path's before each module would gain stability. These were valuable insights if we were to attempt to recompose these modules into a pipelined or asynchronous architecture.
 
+For testing this fully composed module...
