@@ -25,8 +25,6 @@ The IP we created as building blocks include:
 
 Each IP was tested individually by a testbench, e.g. tb/alu_tb.v exist for the sole purpose of testing alu.v.
 
-<!--TBD: Discussion about each testbench? -->
-
 ### IP Composition
 
 We've gone through several iterations of composition:
@@ -49,5 +47,3 @@ First we ran several instructions for basic R-type instructions.
 As a second iteration of instruction testing, we ran R-type instructions and all of our implemented J-type instructions including J, JAL, and JR. 
 Third, we performed testing of our branch instructions in conjunction with R-type instructions. 
 Finally we assembled all of a Fibonacci implementation for testing and found that it achieved the correct result for several hardcoded test input values ranging from 4 to 32.
-
-<!-- #### Adding Loader and building "FPGA Driver" Moudle -->
